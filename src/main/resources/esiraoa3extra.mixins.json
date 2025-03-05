@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "cn.sh1rocu.esiraoa3extra.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "esiraoa3extra.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

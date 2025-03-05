@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/sunshine_bow",
+  "textures": {
+    "layer0": "aoa3:item/sunshine_bow_pulling_2"
+  }
+}

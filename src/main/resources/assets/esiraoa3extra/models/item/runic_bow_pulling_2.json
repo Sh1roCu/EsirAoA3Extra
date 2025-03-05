@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/runic_bow",
+  "textures": {
+    "layer0": "aoa3:item/runic_bow_pulling_2"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "esiraoa3extra:item/starupgradeticket_weapon"
+  }
+}

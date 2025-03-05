@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/justice_bow",
+  "textures": {
+    "layer0": "aoa3:item/justice_bow_pulling_1"
+  }
+}

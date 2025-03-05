@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/thermally_insulated_rod",
+  "textures": {
+    "layer0": "aoa3:item/thermally_insulated_rod_cast"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/viral_crossbow",
+  "textures": {
+    "layer0": "aoa3:item/viral_crossbow_pulling_1"
+  }
+}

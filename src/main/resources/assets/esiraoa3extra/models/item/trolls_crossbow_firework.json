@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/trolls_crossbow",
+  "textures": {
+    "layer0": "aoa3:item/trolls_crossbow_firework"
+  }
+}

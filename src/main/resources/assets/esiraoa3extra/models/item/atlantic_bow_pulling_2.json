@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/atlantic_bow",
+  "textures": {
+    "layer0": "aoa3:item/atlantic_bow_pulling_2"
+  }
+}

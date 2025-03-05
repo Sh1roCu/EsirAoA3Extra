@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/slingshot",
+  "textures": {
+    "layer0": "aoa3:item/slingshot_pulling_1"
+  }
+}

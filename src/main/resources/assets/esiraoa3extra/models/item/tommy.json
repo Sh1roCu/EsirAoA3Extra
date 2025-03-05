@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/gun",
+  "textures": {
+    "layer0": "aoa3:item/tommy"
+  }
+}

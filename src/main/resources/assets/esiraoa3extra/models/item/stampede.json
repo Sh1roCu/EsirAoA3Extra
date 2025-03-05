@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/small_gun",
+  "textures": {
+    "layer0": "aoa3:item/stampede"
+  }
+}

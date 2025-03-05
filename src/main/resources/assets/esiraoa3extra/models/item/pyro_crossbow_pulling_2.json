@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/pyro_crossbow",
+  "textures": {
+    "layer0": "aoa3:item/pyro_crossbow_pulling_2"
+  }
+}

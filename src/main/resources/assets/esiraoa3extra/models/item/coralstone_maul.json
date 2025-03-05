@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/maul",
+  "textures": {
+    "layer0": "aoa3:item/coralstone_maul"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/spectral_bow",
+  "textures": {
+    "layer0": "aoa3:item/spectral_bow_pulling_0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "esiraoa3extra:item/staff",
+  "textures": {
+    "layer0": "aoa3:item/lightshine"
+  }
+}
