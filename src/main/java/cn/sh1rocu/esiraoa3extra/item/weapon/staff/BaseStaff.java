@@ -2,6 +2,7 @@ package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,6 +16,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -30,6 +32,7 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
     protected float extraDmg = 0;
     protected int amplifierLevel = 0;
     protected int starLevel = 0;
+    protected int archMageLevel = 0;
 
     public BaseStaff(int durability) {
         super(durability);
@@ -40,8 +43,8 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         this.extraDmg = 0;
         this.amplifierLevel = 0;
         this.starLevel = 0;
+        ItemStack stack = player.getItemInHand(hand);
         if (hand.equals(Hand.MAIN_HAND)) {
-            ItemStack stack = player.getItemInHand(hand);
             float[] attribute = EsirUtil.getAttribute(stack);
             if (attribute[0] != -1) {
                 this.extraDmg = attribute[0];
@@ -49,6 +52,7 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
                 this.starLevel = (int) attribute[2];
             }
         }
+        this.archMageLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack);
         return super.use(world, player, hand);
     }
 
@@ -101,7 +105,9 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
     }
 
     public float getExtraDmg() {
-        return (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        float archMageMod = 1;
+        archMageMod += 0.1f * this.archMageLevel;
+        return archMageMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
     }
 
     @Override
@@ -112,7 +118,7 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getDmg() > 0)
-            tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.magic", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getDmg() / getExtraDmg())));
+            tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.magic", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent((getDmg() / getExtraDmg()) * (1 + 0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack)))));
 
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.staff.runesRequired", LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
 

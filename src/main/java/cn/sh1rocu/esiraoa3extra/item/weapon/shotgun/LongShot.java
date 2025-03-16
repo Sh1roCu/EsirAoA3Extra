@@ -28,7 +28,7 @@ public class LongShot extends BaseShotgun {
             return false;
 
         int pellets = getPelletCount();
-        float spreadFactor = 0.1f * pellets * (1 - 0.25f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
+        float spreadFactor = 0.1f * pellets * (1 - 0.15f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
 
         for (int i = 0; i < pellets; i++) {
             BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 6, 1.0f, 0, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor);

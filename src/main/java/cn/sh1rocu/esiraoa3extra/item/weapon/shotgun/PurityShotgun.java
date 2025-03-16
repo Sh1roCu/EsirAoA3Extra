@@ -37,7 +37,7 @@ public class PurityShotgun extends BaseShotgun {
             return false;
 
         int pellets = getPelletCount();
-        float spreadFactor = 0.1f * pellets * (1 - 0.25f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
+        float spreadFactor = 0.1f * pellets * (1 - 0.15f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
         boolean charged = RandomUtil.oneInNChance(5);
 
         for (int i = 0; i < pellets; i++) {

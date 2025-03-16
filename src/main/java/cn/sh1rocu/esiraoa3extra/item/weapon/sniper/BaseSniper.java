@@ -39,6 +39,7 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
     protected float extraDmg = 0;
     protected int amplifierLevel = 0;
     protected int starLevel = 0;
+    protected int shellLevel = 0;
 
     public BaseSniper(double dmg, int durability, int fireDelayTicks, float recoil) {
         super(dmg, durability, fireDelayTicks, recoil);
@@ -59,8 +60,8 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
         this.extraDmg = 0;
         this.amplifierLevel = 0;
         this.starLevel = 0;
+        ItemStack stack = player.getItemInHand(hand);
         if (hand.equals(Hand.MAIN_HAND)) {
-            ItemStack stack = player.getItemInHand(hand);
             float[] attribute = EsirUtil.getAttribute(stack);
             if (attribute[0] != -1) {
                 this.extraDmg = attribute[0];
@@ -68,13 +69,14 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
                 this.starLevel = (int) attribute[2];
             }
         }
+        this.shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
         return super.use(world, player, hand);
     }
 
     @Override
     public void doRecoil(ServerPlayerEntity player, ItemStack stack, Hand hand) {
         int control = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.CONTROL.get(), stack);
-        float recoilAmount = getRecoilForShot(stack, player) * 0.25f * (1 - control * 0.25f);
+        float recoilAmount = getRecoilForShot(stack, player) * 0.25f * (1 - control * 0.15f);
 
         if (!player.isShiftKeyDown() || !player.isOnGround())
             recoilAmount *= 3.5f;
@@ -88,12 +90,12 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
             float shellMod = 1;
 
             if (bullet.getHand() != null)
-                shellMod += 0.2 * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), shooter.getItemInHand(bullet.getHand()));
+                shellMod += 0.1f * shellLevel;
 
             if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))))) {
                 doImpactEffect(target, shooter, bullet, bulletDmgMultiplier);
             } else if (!(target instanceof LivingEntity)) {
-                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod);
+                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
             }
         }
     }
@@ -109,7 +111,7 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.2f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2))));
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2))));
         tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText("items.description.sniper.use", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(20 / (float) getFiringDelay(), 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, getAmmoItem().getDescription()));

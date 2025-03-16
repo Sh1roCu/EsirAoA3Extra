@@ -35,6 +35,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
     protected float extraDmg = 0;
     protected int amplifierLevel = 0;
     protected int starLevel = 0;
+    protected int shellLevel = 0;
 
     public BaseShotgun(final double dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
         super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
@@ -68,8 +69,8 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
         this.extraDmg = 0;
         this.amplifierLevel = 0;
         this.starLevel = 0;
+        ItemStack stack = player.getItemInHand(hand);
         if (hand.equals(Hand.MAIN_HAND)) {
-            ItemStack stack = player.getItemInHand(hand);
             float[] attribute = EsirUtil.getAttribute(stack);
             if (attribute[0] != -1) {
                 this.extraDmg = attribute[0];
@@ -77,6 +78,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
                 this.starLevel = (int) attribute[2];
             }
         }
+        this.shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
         return super.use(world, player, hand);
     }
 
@@ -86,12 +88,12 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
             float shellMod = 1;
 
             if (bullet.getHand() != null)
-                shellMod += 0.2f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), shooter.getItemInHand(bullet.getHand()));
+                shellMod += 0.1f * shellLevel;
 
             if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))))) {
                 doImpactEffect(target, shooter, bullet, bulletDmgMultiplier);
             } else if (!(target instanceof LivingEntity)) {
-                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod);
+                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
             }
         }
     }
@@ -103,7 +105,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
             return false;
         } else {
             int pellets = this.getPelletCount();
-            float spreadFactor = 0.1F * (float) pellets * (1.0F - 0.25F * (float) EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
+            float spreadFactor = 0.1F * (float) pellets * (1.0F - 0.15F * (float) EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
 
             for (int i = 0; i < pellets; ++i) {
                 BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 4, 1.0F, 0, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor);
@@ -125,7 +127,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.shotgun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.2f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2)), LocaleUtil.numToComponent(pelletCount)));
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.shotgun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2)), LocaleUtil.numToComponent(pelletCount)));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(20 / (float) getFiringDelay(), 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, getAmmoItem().getDescription()));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(isFullAutomatic() ? "items.description.gun.fully_automatic" : "items.description.gun.semi_automatic", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
