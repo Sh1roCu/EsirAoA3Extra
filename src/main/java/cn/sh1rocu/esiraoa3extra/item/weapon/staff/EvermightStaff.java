@@ -8,6 +8,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.library.builder.EffectBuilder;
@@ -46,6 +48,7 @@ public class EvermightStaff extends BaseStaff<Float> {
         EntityUtil.applyPotions(caster, new EffectBuilder(Effects.DAMAGE_BOOST, (int) (1200f * (1 - args))).level(args < 0.1 ? 3 : args < 0.5 ? 2 : 1));
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.library.builder.EffectBuilder;
 import net.tslat.aoa3.util.EntityUtil;
@@ -26,6 +28,7 @@ public class PoisonBow extends BaseBow {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.POISON, 48).level(2));
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));

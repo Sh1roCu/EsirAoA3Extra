@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.IllusionShotEntity;
+import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +22,7 @@ public class IllusionRevolver extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new IllusionShotEntity(shooter, this, 60));
+        BaseEnergyShot illusionShot = new IllusionShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, illusionShot);
     }
 }

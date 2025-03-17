@@ -7,6 +7,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoABlocks;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -28,7 +30,6 @@ public class SkydriverBow extends BaseBow {
             testPos.set(arrow.blockPosition());
 
             while (testPos.getY() >= 0 && arrow.level.isEmptyBlock(testPos.move(Direction.DOWN))) {
-                ;
             }
 
             if (arrow.level.getBlockState(testPos).isFaceSturdy(arrow.level, testPos, Direction.UP) && arrow.level.getBlockState(testPos.above()).getMaterial().isReplaceable() && WorldUtil.canPlaceBlock(arrow.level, testPos.above(), shooter, null))
@@ -36,6 +37,7 @@ public class SkydriverBow extends BaseBow {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

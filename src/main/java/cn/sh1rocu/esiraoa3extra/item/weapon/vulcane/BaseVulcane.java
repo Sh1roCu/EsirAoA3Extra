@@ -4,7 +4,6 @@ import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.ActionResult;
@@ -12,23 +11,19 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import net.tslat.aoa3.util.PlayerUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vulcane.BaseVulcane {
     protected double baseDmg;
-
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
 
     public BaseVulcane(double dmg, int durability) {
         super(dmg, durability);
@@ -46,32 +41,17 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        ItemStack stack = player.getItemInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
-            }
-        }
-        if (!(player instanceof ServerPlayerEntity))
-            return ActionResult.fail(stack);
-
-        AoAResource.Instance rage = PlayerUtil.getResource((ServerPlayerEntity) player, AoAResources.RAGE.get());
-
-        if (!rage.hasAmount(50) || player.getLastHurtByMob() == null)
-            return ActionResult.fail(stack);
-
-        return activate(rage, stack, hand);
-    }
-
     public ActionResult<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, Hand hand) {
         PlayerEntity pl = rage.getPlayerDataManager().player();
+        float extraDmg = 0;
+        int amplifierLevel = 0;
+        int starLevel = 0;
+        float[] attribute = EsirUtil.getAttribute(vulcane);
+        if (attribute[0] != -1) {
+            extraDmg = attribute[0];
+            amplifierLevel = (int) attribute[1];
+            starLevel = (int) attribute[2];
+        }
         float damage = (float) getDamage() * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))) * (1 + ((rage.getCurrentValue() - 50) / 100));
         float targetHealth = pl.getLastHurtByMob().getHealth();
 
@@ -95,6 +75,7 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
         return 8;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.true", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(baseDmg)));

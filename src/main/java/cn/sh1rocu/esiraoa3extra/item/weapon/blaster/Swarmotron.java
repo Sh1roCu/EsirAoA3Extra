@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.SwarmShotEntity;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -26,13 +28,15 @@ public class Swarmotron extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new SwarmShotEntity(shooter, this, 60, 0, 0, 0));
-        shooter.level.addFreshEntity(new SwarmShotEntity(shooter, this, 60, -0.125f, 0f, -0.125f));
-        shooter.level.addFreshEntity(new SwarmShotEntity(shooter, this, 60, -0.125f, 0, 0));
-        shooter.level.addFreshEntity(new SwarmShotEntity(shooter, this, 60, 0.125f, -0.125f, 0.125f));
-        shooter.level.addFreshEntity(new SwarmShotEntity(shooter, this, 60, 0.125f, 0.125f, 0.125f));
+        SwarmShotEntity swarmShot1 = new SwarmShotEntity(shooter, this, 60, 0, 0, 0);
+        SwarmShotEntity swarmShot2 = new SwarmShotEntity(shooter, this, 60, -0.125f, 0f, -0.125f);
+        SwarmShotEntity swarmShot3 = new SwarmShotEntity(shooter, this, 60, -0.125f, 0, 0);
+        SwarmShotEntity swarmShot4 = new SwarmShotEntity(shooter, this, 60, 0.125f, -0.125f, 0.125f);
+        SwarmShotEntity swarmShot5 = new SwarmShotEntity(shooter, this, 60, 0.125f, 0.125f, 0.125f);
+        createEnergyShot(blaster, shooter, swarmShot1, swarmShot2, swarmShot3, swarmShot4, swarmShot5);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

@@ -8,6 +8,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.ToxicShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -31,11 +33,12 @@ public class ToxicTerrorizer extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 60));
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 60, -0.05f, -0.05f, 0f));
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 60, 0.05f, -0.05f, 0f));
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 60, 0, -0.05f, -0.05f));
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 60, 0, -0.05f, 0.05f));
+        ToxicShotEntity toxicShot1 = new ToxicShotEntity(shooter, this, 60);
+        ToxicShotEntity toxicShot2 = new ToxicShotEntity(shooter, this, 60, -0.05f, -0.05f, 0f);
+        ToxicShotEntity toxicShot3 = new ToxicShotEntity(shooter, this, 60, 0.05f, -0.05f, 0f);
+        ToxicShotEntity toxicShot4 = new ToxicShotEntity(shooter, this, 60, 0, -0.05f, -0.05f);
+        ToxicShotEntity toxicShot5 = new ToxicShotEntity(shooter, this, 60, 0, -0.05f, 0.05f);
+        createEnergyShot(blaster, shooter, toxicShot1, toxicShot2, toxicShot3, toxicShot4, toxicShot5);
     }
 
     @Override
@@ -46,6 +49,7 @@ public class ToxicTerrorizer extends BaseBlaster {
         return false;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));

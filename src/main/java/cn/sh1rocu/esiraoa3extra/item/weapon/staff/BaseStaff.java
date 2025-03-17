@@ -5,17 +5,18 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.util.ItemUtil;
@@ -29,31 +30,8 @@ import java.util.Map;
 public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.staff.BaseStaff<T> {
     protected final HashMap<Item, Integer> runes = new HashMap<Item, Integer>(2);
 
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
-    protected int archMageLevel = 0;
-
     public BaseStaff(int durability) {
         super(durability);
-    }
-
-    @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        ItemStack stack = player.getItemInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
-            }
-        }
-        this.archMageLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack);
-        return super.use(world, player, hand);
     }
 
     public boolean findAndConsumeRunes(HashMap<Item, Integer> runes, ServerPlayerEntity player, boolean allowBuffs, ItemStack staff) {
@@ -104,10 +82,28 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         return 0;
     }
 
-    public float getExtraDmg() {
-        float archMageMod = 1;
-        archMageMod += 0.1f * this.archMageLevel;
-        return archMageMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+    public void createEnergyShot(World world, ItemStack staff, LivingEntity caster, BaseEnergyShot... shots) {
+        float extraDmg = 0;
+        float amplifierLevel = 0;
+        float starLevel = 0;
+        int archMageLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), staff);
+        if (getWeaponHand(caster).equals(Hand.MAIN_HAND)) {
+            float[] attribute = EsirUtil.getAttribute(staff);
+            if (attribute[0] != -1) {
+                extraDmg = attribute[0];
+                amplifierLevel = (int) attribute[1];
+                starLevel = (int) attribute[2];
+            }
+        }
+        float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+
+        CompoundNBT nbt;
+        for (BaseEnergyShot shot : shots) {
+            nbt = shot.getPersistentData();
+            nbt.putFloat("extraDmgMod", extraDmgMod);
+            nbt.putInt("archMageLevel", archMageLevel);
+            world.addFreshEntity(shot);
+        }
     }
 
     @Override
@@ -115,10 +111,11 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         return 8;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getDmg() > 0)
-            tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.magic", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent((getDmg() / getExtraDmg()) * (1 + 0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack)))));
+            tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.magic", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getDmg() * (1 + 0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack)))));
 
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.staff.runesRequired", LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
 

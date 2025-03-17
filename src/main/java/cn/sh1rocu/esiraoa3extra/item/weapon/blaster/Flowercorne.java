@@ -8,6 +8,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.FlowerShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -31,8 +33,9 @@ public class Flowercorne extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new FlowerShotEntity(shooter, this, 60, 0, 0.25f, 0));
-        shooter.level.addFreshEntity(new FlowerShotEntity(shooter, this, 60, 0, 0f, 0));
+        BaseEnergyShot flowerShot1 = new FlowerShotEntity(shooter, this, 60, 0, 0.25f, 0);
+        BaseEnergyShot flowerShot2 = new FlowerShotEntity(shooter, this, 60, 0, 0f, 0);
+        createEnergyShot(blaster, shooter, flowerShot1, flowerShot2);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class Flowercorne extends BaseBlaster {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.WEAKNESS, 100));
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.WEAKENS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));

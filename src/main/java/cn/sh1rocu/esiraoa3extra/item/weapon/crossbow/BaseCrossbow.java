@@ -21,7 +21,10 @@ import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.*;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -40,9 +43,6 @@ import java.util.Random;
 
 public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.BaseCrossbow {
     protected double damage;
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
 
     public BaseCrossbow(double damage, int durability) {
         super(damage, durability);
@@ -55,41 +55,8 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        ItemStack stack = player.getItemInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
-            }
-        }
-        return super.use(world, player, hand);
-    }
-
-    @Override
     public UseAction getUseAnimation(ItemStack stack) {
         return UseAction.CROSSBOW;
-    }
-
-    @Override
-    public void onUseTick(World world, LivingEntity shooter, ItemStack stack, int count) {
-        super.onUseTick(world, shooter, stack, count);
-    }
-
-    @Override
-    public void releaseUsing(ItemStack crossbowStack, World world, LivingEntity shooter, int timeLeft) {
-        int useTicks = getUseDuration(crossbowStack) - timeLeft;
-        float charge = getCharge(crossbowStack, useTicks);
-
-        if (charge >= 1.0F && !isCharged(crossbowStack) && hasAmmo(shooter, crossbowStack)) {
-            setCharged(crossbowStack, true);
-            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_LOADING_END, shooter instanceof PlayerEntity ? SoundCategory.PLAYERS : SoundCategory.HOSTILE, 1.0F, 1.0F / (random.nextFloat() * 0.5F + 1.0F) + 0.2F);
-        }
     }
 
     protected ItemStack findAmmo(ItemStack crossbowStack, LivingEntity player, boolean infiniteAmmo) {
@@ -218,6 +185,21 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
             if (projectile instanceof CustomArrowEntity)
                 doArrowMods((CustomArrowEntity) projectile, shooter, 0);
 
+            float extraDmg = 0;
+            float amplifierLevel = 0;
+            float starLevel = 0;
+            if (hand.equals(Hand.MAIN_HAND)) {
+                float[] attribute = EsirUtil.getAttribute(crossbowStack);
+                if (attribute[0] != -1) {
+                    extraDmg = attribute[0];
+                    amplifierLevel = (int) attribute[1];
+                    starLevel = (int) attribute[2];
+                }
+            }
+            float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+
+            CompoundNBT nbt = projectile.getPersistentData();
+            nbt.putFloat("extraDmgMod", extraDmgMod);
             world.addFreshEntity(projectile);
             crossbowStack.hurtAndBreak(isFirework ? 3 : 1, shooter, (user) -> user.broadcastBreakEvent(hand));
             world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, soundPitch);
@@ -321,11 +303,11 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
         if (isCritical)
             damage += damage + (damage * 0.1f * random.nextGaussian());
 
-        return damage * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        return damage * arrow.getPersistentData().getFloat("extraDmgMod");
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(Double.toString(getDamage()))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, new TranslationTextComponent(Items.ARROW.getDescriptionId())));
     }

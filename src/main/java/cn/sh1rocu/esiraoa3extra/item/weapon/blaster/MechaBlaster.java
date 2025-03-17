@@ -21,6 +21,7 @@ public class MechaBlaster extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new IroMinerShotEntity(shooter, this, 60));
+        IroMinerShotEntity iroMinerShot = new IroMinerShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, iroMinerShot);
     }
 }

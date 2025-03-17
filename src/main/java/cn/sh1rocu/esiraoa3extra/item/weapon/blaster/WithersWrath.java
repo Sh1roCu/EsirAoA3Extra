@@ -8,6 +8,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.WrathShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -31,7 +33,8 @@ public class WithersWrath extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new WrathShotEntity(shooter, this, 60));
+        WrathShotEntity wrathShot = new WrathShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, wrathShot);
     }
 
     @Override
@@ -39,6 +42,7 @@ public class WithersWrath extends BaseBlaster {
         EntityUtil.applyPotions(target, new EffectBuilder(Effects.WITHER, 30).level(3));
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.WITHERS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));

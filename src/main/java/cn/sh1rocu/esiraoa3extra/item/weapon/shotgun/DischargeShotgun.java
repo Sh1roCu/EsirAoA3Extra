@@ -10,6 +10,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -22,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class DischargeShotgun extends BaseShotgun {
-    private int firingDelay;
+    private final int firingDelay;
 
     public DischargeShotgun(final double dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
         super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
@@ -70,6 +72,7 @@ public class DischargeShotgun extends BaseShotgun {
         return true;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);

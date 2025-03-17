@@ -178,7 +178,7 @@ public final class AoAArmour {
 
         private AdventArmour construct(Constructor<? extends AdventArmour> constructor, EquipmentSlotType slot) {
             try {
-                return (AdventArmour) constructor.newInstance(slot);
+                return constructor.newInstance(slot);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException var4) {
                 Logging.logMessage(Level.ERROR, "Somehow we've managed to throw an error while registering armours. I'm really not even sure how this is possible.", var4);
                 return null;

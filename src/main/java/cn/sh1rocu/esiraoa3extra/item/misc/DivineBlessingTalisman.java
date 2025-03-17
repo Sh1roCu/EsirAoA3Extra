@@ -26,7 +26,7 @@ public class DivineBlessingTalisman extends Item {
     public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack talisman = player.getItemInHand(hand);
         if (player instanceof ServerPlayerEntity) {
-            ServerPlayerEntity pl = (ServerPlayerEntity)player;
+            ServerPlayerEntity pl = (ServerPlayerEntity) player;
             ItemStack offhand = pl.getItemInHand(Hand.OFF_HAND);
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
                 CompoundNBT compoundNBT = offhand.getTag() != null ? offhand.getTag() : new CompoundNBT();

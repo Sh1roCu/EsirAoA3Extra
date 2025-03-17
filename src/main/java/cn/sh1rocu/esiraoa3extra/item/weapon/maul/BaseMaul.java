@@ -1,6 +1,5 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.maul;
 
-import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
@@ -16,9 +15,7 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -39,9 +36,6 @@ public class BaseMaul extends net.tslat.aoa3.content.item.weapon.maul.BaseMaul {
     protected static final UUID KNOCKBACK_MODIFIER_UUID = UUID.fromString("f21dd55d-0e43-4e19-a683-1df45d51c60f");
 
     protected final float baseDamage;
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
     protected final double attackSpeed;
     protected final double knockback;
 
@@ -55,7 +49,7 @@ public class BaseMaul extends net.tslat.aoa3.content.item.weapon.maul.BaseMaul {
     }
 
     public float getAttackDamage() {
-        return baseDamage * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        return baseDamage;
     }
 
     public double getAttackSpeed() {
@@ -66,31 +60,8 @@ public class BaseMaul extends net.tslat.aoa3.content.item.weapon.maul.BaseMaul {
         return knockback;
     }
 
-    @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        float[] attribute = EsirUtil.getAttribute(stack);
-        if (attribute[0] != -1) {
-            this.extraDmg = attribute[0];
-            this.amplifierLevel = (int) attribute[1];
-            this.starLevel = (int) attribute[2];
-        }
-        return UseAction.BLOCK;
-    }
-
-    @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        return super.use(world, player, hand);
-    }
-
     protected Lazy<ImmutableSetMultimap<Attribute, AttributeModifier>> buildDefaultAttributes() {
-        return Lazy.of(() -> ImmutableSetMultimap.of(
-                Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getAttackDamage(), AttributeModifier.Operation.ADDITION),
-                Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", getAttackSpeed(), AttributeModifier.Operation.ADDITION),
-                Attributes.ATTACK_KNOCKBACK, getKnockbackModifier(1),
-                ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(UUID.fromString("93bb7485-ce86-4e78-ab50-26f53d78ad9d"), "AoAGreatbladeReach", 0.5f, AttributeModifier.Operation.ADDITION)));
+        return Lazy.of(() -> ImmutableSetMultimap.of(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.getAttackDamage(), AttributeModifier.Operation.ADDITION), Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", this.getAttackSpeed(), AttributeModifier.Operation.ADDITION), Attributes.ATTACK_KNOCKBACK, this.getKnockbackModifier(1.0F), ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(UUID.fromString("93bb7485-ce86-4e78-ab50-26f53d78ad9d"), "AoAGreatbladeReach", 0.5, AttributeModifier.Operation.ADDITION)));
     }
 
     private AttributeModifier getKnockbackModifier(float attackStrengthMod) {

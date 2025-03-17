@@ -7,7 +7,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public class ChannelCheckNetwork {
     public static SimpleChannel CHANNEL;
     private static final String VERSION = "1.0";
-    private static int ID = 0;
+    private static final int ID = 0;
 
 
     public ChannelCheckNetwork() {
@@ -16,67 +16,6 @@ public class ChannelCheckNetwork {
                 () -> VERSION,
                 (v) -> true,    //mod只装在客户端时不检查服务端
                 (v) -> v.equals(VERSION)); //服务端检查客户端版本
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         registerMessage();

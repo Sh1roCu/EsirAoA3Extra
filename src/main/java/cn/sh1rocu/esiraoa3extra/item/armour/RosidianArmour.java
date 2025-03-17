@@ -48,7 +48,7 @@ public class RosidianArmour extends AdventArmour {
 	}*/ // TODO
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         //tooltip.add(pieceEffectHeader());
         //tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.rosidian_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         //tooltip.add(setEffectHeader());

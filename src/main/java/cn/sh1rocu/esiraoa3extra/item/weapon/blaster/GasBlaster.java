@@ -10,6 +10,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.ToxicShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -33,7 +35,8 @@ public class GasBlaster extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new ToxicShotEntity(shooter, this, 1));
+        BaseEnergyShot toxicShot = new ToxicShotEntity(shooter, this, 1);
+        createEnergyShot(blaster, shooter, toxicShot);
     }
 
     @Override
@@ -55,7 +58,7 @@ public class GasBlaster extends BaseBlaster {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.POISON, 13).level(2));
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

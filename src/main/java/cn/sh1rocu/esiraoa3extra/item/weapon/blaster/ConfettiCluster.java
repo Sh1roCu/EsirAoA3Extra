@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.ConfettiClusterEntity;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -26,12 +28,11 @@ public class ConfettiCluster extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        ConfettiClusterEntity shot = new ConfettiClusterEntity(shooter, this, 1);
-
-        shot.setDeltaMovement(shot.getDeltaMovement().multiply(0.25d, 0.25d, 0.25d));
-        shooter.level.addFreshEntity(shot);
+        ConfettiClusterEntity confettiCluster = new ConfettiClusterEntity(shooter, this, 1);
+        createEnergyShot(blaster, shooter, confettiCluster);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));

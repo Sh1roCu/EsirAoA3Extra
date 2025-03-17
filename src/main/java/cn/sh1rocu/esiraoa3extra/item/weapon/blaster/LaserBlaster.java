@@ -21,6 +21,7 @@ public class LaserBlaster extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new LaserShotEntity(shooter, this, 60));
+        LaserShotEntity laserShot = new LaserShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, laserShot);
     }
 }

@@ -1,4 +1,3 @@
-
 package cn.sh1rocu.esiraoa3extra.client.gui.container;
 
 import cn.sh1rocu.esiraoa3extra.container.AmplifierTableContainer;
@@ -26,7 +25,7 @@ public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContaine
         this.renderBackground(matrix);
         RenderSystem.blendColor(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getInstance().getTextureManager().bind(textures);
-        this.blit(matrix, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        blit(matrix, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
         super.render(matrix, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrix, mouseX, mouseY);
     }

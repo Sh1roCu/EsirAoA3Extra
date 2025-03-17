@@ -11,12 +11,18 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.ArrowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.ActionResult;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.util.LocaleUtil;
 
@@ -26,9 +32,6 @@ import java.util.List;
 public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
     protected float drawSpeedMultiplier;
     protected double dmg;
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
 
     public BaseBow(double damage, float drawSpeedMultiplier, int durability) {
         super(damage, drawSpeedMultiplier, durability);
@@ -41,25 +44,56 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        ItemStack stack = player.getItemInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
+    public void releaseUsing(ItemStack stack, World world, LivingEntity shooter, int timeLeft) {
+        if (shooter instanceof PlayerEntity) {
+            PlayerEntity pl = (PlayerEntity) shooter;
+            boolean infiniteAmmo = pl.isCreative() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
+            ItemStack ammoStack = this.findAmmo(pl, stack, infiniteAmmo);
+            int charge = (int) ((float) (this.getUseDuration(stack) - timeLeft) * this.getDrawSpeedMultiplier());
+            charge = ForgeEventFactory.onArrowLoose(stack, world, pl, charge, !ammoStack.isEmpty() || infiniteAmmo);
+            if (charge >= 0) {
+                if (!ammoStack.isEmpty() || infiniteAmmo) {
+                    if (ammoStack.isEmpty()) {
+                        ammoStack = new ItemStack(Items.ARROW);
+                    }
+
+                    float velocity = getPowerForTime(charge);
+                    if ((double) velocity >= 0.1) {
+                        if (!world.isClientSide) {
+                            CustomArrowEntity arrow = this.makeArrow(pl, stack, ammoStack, velocity, !infiniteAmmo);
+                            arrow = this.doArrowMods(arrow, shooter, ammoStack, timeLeft);
+                            float extraDmg = 0;
+                            float amplifierLevel = 0;
+                            float starLevel = 0;
+                            if (shooter.getUsedItemHand().equals(Hand.MAIN_HAND)) {
+                                float[] attribute = EsirUtil.getAttribute(stack);
+                                if (attribute[0] != -1) {
+                                    extraDmg = attribute[0];
+                                    amplifierLevel = (int) attribute[1];
+                                    starLevel = (int) attribute[2];
+                                }
+                            }
+                            float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+
+                            CompoundNBT nbt = arrow.getPersistentData();
+                            nbt.putFloat("extraDmgMod", extraDmgMod);
+                            world.addFreshEntity(arrow);
+                        }
+
+                        world.playSound(null, pl.getX(), pl.getY(), pl.getZ(), SoundEvents.ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + velocity * 0.5F);
+                        if (!infiniteAmmo && !pl.abilities.instabuild) {
+                            ammoStack.shrink(1);
+                            if (ammoStack.isEmpty()) {
+                                pl.inventory.removeItem(ammoStack);
+                            }
+                        }
+
+                        pl.awardStat(Stats.ITEM_USED.get(this));
+                    }
+                }
+
             }
         }
-        return super.use(world, player, hand);
-    }
-
-    @Override
-    public void releaseUsing(ItemStack stack, World world, LivingEntity shooter, int timeLeft) {
-        super.releaseUsing(stack, world, shooter, timeLeft);
     }
 
     protected ItemStack findAmmo(PlayerEntity shooter, ItemStack bowStack, boolean infiniteAmmo) {
@@ -91,7 +125,6 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
 
         if (!consumeAmmo || (shooter instanceof PlayerEntity && ((PlayerEntity) shooter).isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
             arrow.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
-
         return arrow;
     }
 
@@ -117,7 +150,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
         if (isCritical)
             damage += damage + (damage * 0.1f * random.nextGaussian());
 
-        return damage * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        return damage * arrow.getPersistentData().getFloat("extraDmgMod");
     }
 
     @Override
@@ -125,6 +158,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
         return 8;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(Double.toString(getDamage()))));

@@ -24,7 +24,7 @@ public class GoofyGreatblade extends BaseGreatblade {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.RANDOM_DAMAGE, LocaleUtil.ItemDescriptionType.BENEFICIAL, new StringTextComponent(String.valueOf(getDamage() - 5)), new StringTextComponent(String.valueOf(getDamage() + 5))));
     }
 }

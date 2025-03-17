@@ -13,6 +13,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.content.entity.projectile.blaster.LightSparkEntity;
@@ -39,7 +41,8 @@ public class LightSpark extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new LightSparkEntity(shooter, this, 5));
+        LightSparkEntity lightSpark = new LightSparkEntity(shooter, this, 5);
+        createEnergyShot(blaster, shooter, lightSpark);
     }
 
     @Override
@@ -94,7 +97,7 @@ public class LightSpark extends BaseBlaster {
     public void releaseUsing(ItemStack stack, World world, LivingEntity player, int useTicksRemaining) {
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

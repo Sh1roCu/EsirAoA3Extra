@@ -5,16 +5,17 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -31,11 +32,6 @@ import java.util.List;
 public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.BaseShotgun {
     protected final int pelletCount;
     protected final float knockbackFactor;
-
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
-    protected int shellLevel = 0;
 
     public BaseShotgun(final double dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
         super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
@@ -65,35 +61,17 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        ItemStack stack = player.getItemInHand(hand);
-        if (hand.equals(Hand.MAIN_HAND)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
-            }
-        }
-        this.shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
-        return super.use(world, player, hand);
-    }
-
-    @Override
     public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, float bulletDmgMultiplier) {
         if (target != null) {
             float shellMod = 1;
-
+            CompoundNBT nbt = bullet.getPersistentData();
+            float extraDmgMod = nbt.getFloat("extraDmgMod");
             if (bullet.getHand() != null)
-                shellMod += 0.1f * shellLevel;
-
-            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))))) {
+                shellMod += 0.1f * nbt.getInt("shellLevel");
+            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod)) {
                 doImpactEffect(target, shooter, bullet, bulletDmgMultiplier);
             } else if (!(target instanceof LivingEntity)) {
-                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+                target.hurt(new IndirectEntityDamageSource("gun", bullet, shooter).setProjectile(), (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod);
             }
         }
     }
@@ -104,11 +82,27 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
         if (bullet == null) {
             return false;
         } else {
+            float extraDmg = 0;
+            float amplifierLevel = 0;
+            float starLevel = 0;
+            int shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
+            if (getGunHand(stack).equals(Hand.MAIN_HAND)) {
+                float[] attribute = EsirUtil.getAttribute(stack);
+                if (attribute[0] != -1) {
+                    extraDmg = attribute[0];
+                    amplifierLevel = (int) attribute[1];
+                    starLevel = (int) attribute[2];
+                }
+            }
+
             int pellets = this.getPelletCount();
             float spreadFactor = 0.1F * (float) pellets * (1.0F - 0.15F * (float) EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.FORM.get(), stack));
-
+            CompoundNBT nbt;
             for (int i = 0; i < pellets; ++i) {
                 BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 4, 1.0F, 0, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor);
+                nbt = pellet.getPersistentData();
+                nbt.putFloat("extraDmgMod", (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+                nbt.putInt("shellLevel", shellLevel);
                 shooter.level.addFreshEntity(pellet);
             }
 
@@ -125,6 +119,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
         return new MetalSlugEntity(shooter, this, hand, 4, 0);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.shotgun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2)), LocaleUtil.numToComponent(pelletCount)));

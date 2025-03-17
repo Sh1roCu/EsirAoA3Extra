@@ -11,6 +11,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.ArcwormShotEntity;
+import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +28,8 @@ public class ExperimentW801 extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new ArcwormShotEntity(shooter, this, 120));
+        BaseEnergyShot arcwormShot = new ArcwormShotEntity(shooter, this, 120);
+        createEnergyShot(blaster, shooter, arcwormShot);
     }
 
     @Override

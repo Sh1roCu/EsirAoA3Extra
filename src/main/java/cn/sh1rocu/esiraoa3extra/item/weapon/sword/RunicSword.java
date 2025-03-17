@@ -46,7 +46,7 @@ public class RunicSword extends BaseSword {
                 } else if (rune == AoAItems.WATER_RUNE.get()) {
                     target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
                 } else if (rune == AoAItems.CHARGED_RUNE.get()) {
-                    ((ServerWorld) target.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, target.getX() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), target.getY() + 1 + (random.nextFloat() * target.getBbHeight()), target.getZ() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), 3, 0, 0, 0, (double) 0);
+                    ((ServerWorld) target.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, target.getX() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), target.getY() + 1 + (random.nextFloat() * target.getBbHeight()), target.getZ() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), 3, 0, 0, 0, 0);
                 } else {
                     return;
                 }
@@ -60,7 +60,7 @@ public class RunicSword extends BaseSword {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.HARMFUL, 2));
     }

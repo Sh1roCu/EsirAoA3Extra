@@ -9,6 +9,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.library.builder.EffectBuilder;
 import net.tslat.aoa3.util.EntityUtil;
@@ -25,7 +27,7 @@ public class DeepBow extends BaseBow {
     @Override
     public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {
         if (!arrow.level.isClientSide)
-            ((ServerWorld) arrow.level).sendParticles(ParticleTypes.FIREWORK, arrow.getX(), arrow.getY() + 0.1, arrow.getZ(), 1, 0, 0, 0, (double) 0);
+            ((ServerWorld) arrow.level).sendParticles(ParticleTypes.FIREWORK, arrow.getX(), arrow.getY() + 0.1, arrow.getZ(), 1, 0, 0, 0, 0);
     }
 
     @Override
@@ -34,6 +36,7 @@ public class DeepBow extends BaseBow {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.GLOWING, 200));
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

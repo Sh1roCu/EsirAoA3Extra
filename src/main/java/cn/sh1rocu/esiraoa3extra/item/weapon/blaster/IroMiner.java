@@ -8,6 +8,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.capability.volatilestack.VolatileStackCapabilityHandles;
@@ -33,7 +35,8 @@ public class IroMiner extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new IroMinerShotEntity(shooter, this, 60));
+        IroMinerShotEntity iroMinerShot = new IroMinerShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, iroMinerShot);
     }
 
     @Override
@@ -64,6 +67,7 @@ public class IroMiner extends BaseBlaster {
         return new VolatileStackCapabilityProvider();
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

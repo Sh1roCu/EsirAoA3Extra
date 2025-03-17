@@ -6,11 +6,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -52,16 +55,19 @@ public class NightmareStaff extends BaseStaff<BlockPos> {
 
     @Override
     public void cast(World world, ItemStack staff, LivingEntity caster, BlockPos args) {
-        BlockPos pos = (BlockPos) args;
-
         for (int i = 0; i < 8; i++) {
-            world.addFreshEntity(new NightmareFallEntity(caster, this, (pos.getX() - 4) + RandomUtil.randomValueUpTo(8), pos.getY() + 30, (pos.getZ() - 4) + RandomUtil.randomValueUpTo(8), 3.0f));
+            NightmareFallEntity nightmareFall = new NightmareFallEntity(caster, this, (args.getX() - 4) + RandomUtil.randomValueUpTo(8), args.getY() + 30, (args.getZ() - 4) + RandomUtil.randomValueUpTo(8), 3.0f);
+            createEnergyShot(world, staff, caster, nightmareFall);
         }
     }
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg(), false)) {
+        CompoundNBT nbt = shot.getPersistentData();
+        float archMageMod = 1;
+        archMageMod += 0.1f * nbt.getInt("archMageLevel");
+        float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.POISON, 100).level(2));
 
             return true;
@@ -72,9 +78,10 @@ public class NightmareStaff extends BaseStaff<BlockPos> {
 
     @Override
     public float getDmg() {
-        return 28 * this.getExtraDmg();
+        return 28;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

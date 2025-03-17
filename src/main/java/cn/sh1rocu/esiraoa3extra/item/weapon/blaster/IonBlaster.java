@@ -21,6 +21,7 @@ public class IonBlaster extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new IonShotEntity(shooter, this, 60));
+        IonShotEntity ionShot = new IonShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, ionShot);
     }
 }

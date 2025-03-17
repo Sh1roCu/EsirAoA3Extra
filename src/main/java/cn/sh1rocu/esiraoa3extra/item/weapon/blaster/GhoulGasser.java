@@ -8,6 +8,8 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.content.entity.projectile.staff.GhoulShotEntity;
@@ -31,7 +33,8 @@ public class GhoulGasser extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new GhoulShotEntity(shooter, this, 1));
+        BaseEnergyShot ghoulShot = new GhoulShotEntity(shooter, this, 1);
+        createEnergyShot(blaster, shooter, ghoulShot);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class GhoulGasser extends BaseBlaster {
         return true;
     }
 
-
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

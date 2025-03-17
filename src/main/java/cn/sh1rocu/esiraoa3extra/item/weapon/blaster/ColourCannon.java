@@ -8,6 +8,7 @@ import net.minecraft.util.SoundEvent;
 import net.tslat.aoa3.common.registration.AoAItemGroups;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.RainbowShotEntity;
+import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +25,7 @@ public class ColourCannon extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new RainbowShotEntity(shooter, this, 120));
+        BaseEnergyShot rainbowShot = new RainbowShotEntity(shooter, this, 120);
+        createEnergyShot(blaster, shooter, rainbowShot);
     }
 }

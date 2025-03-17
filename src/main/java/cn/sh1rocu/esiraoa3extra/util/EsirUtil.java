@@ -2,7 +2,6 @@ package cn.sh1rocu.esiraoa3extra.util;
 
 import com.google.gson.JsonParseException;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;

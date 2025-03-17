@@ -452,7 +452,7 @@ public final class AoAWeapons {
         });
         BARON_SWORD = registerWeapon("baron_sword", BaronSword::new);
         BLOODFURY = registerWeapon("bloodfury", () -> {
-            return new BaseSword(ItemUtil.customItemTier(1770, -2.2F, 13.0F, 4, 10, (Supplier) null));
+            return new BaseSword(ItemUtil.customItemTier(1770, -2.2F, 13.0F, 4, 10, null));
         });
         BLOODSTONE_SWORD = registerWeapon("bloodstone_sword", () -> {
             return new BaseSword(ItemUtil.customItemTier(1800, AttackSpeed.NORMAL, 14.0F, 4, 16, AoAItems.BLOODSTONE));
@@ -478,7 +478,7 @@ public final class AoAWeapons {
         });
         LEGBONE_SWORD = registerWeapon("legbone_sword", LegboneSword::new);
         LIGHTS_WAY = registerWeapon("lights_way", () -> {
-            return new BaseSword(ItemUtil.customItemTier(2700, AttackSpeed.DOUBLE, 7.5F, 4, 10, (Supplier) null));
+            return new BaseSword(ItemUtil.customItemTier(2700, AttackSpeed.DOUBLE, 7.5F, 4, 10, null));
         });
         LIMONITE_SWORD = registerWeapon("limonite_sword", () -> {
             return new BaseSword(ItemUtil.customItemTier(400, AttackSpeed.NORMAL, 5.0F, 2, 3, AoAItems.LIMONITE_INGOT));
@@ -496,11 +496,11 @@ public final class AoAWeapons {
             return new BaseSword(ItemUtil.customItemTier(1750, AttackSpeed.NORMAL, 10.0F, 4, 19, AoAItems.SAPPHIRE));
         });
         SHADOW_SWORD = registerWeapon("shadow_sword", () -> {
-            return new BaseSword(ItemUtil.customItemTier(2300, AttackSpeed.NORMAL, 17.0F, 4, 10, (Supplier) null));
+            return new BaseSword(ItemUtil.customItemTier(2300, AttackSpeed.NORMAL, 17.0F, 4, 10, null));
         });
         SHROOMUS_SWORD = registerWeapon("shroomus_sword", ShroomusSword::new);
         SKELETAL_SWORD = registerWeapon("skeletal_sword", () -> {
-            return new BaseSword(ItemUtil.customItemTier(2100, -2.0F, 10.5F, 4, 10, (Supplier) null));
+            return new BaseSword(ItemUtil.customItemTier(2100, -2.0F, 10.5F, 4, 10, null));
         });
         SUPREMACY_SWORD = registerWeapon("supremacy_sword", SupremacySword::new);
         SWEET_SWORD = registerWeapon("sweet_sword", SweetSword::new);
@@ -547,7 +547,7 @@ public final class AoAWeapons {
         TIDAL_GREATBLADE = registerWeapon("tidal_greatblade", TidalGreatblade::new);
         UNDERWORLD_GREATBLADE = registerWeapon("underworld_greatblade", UnderworldGreatblade::new);
         CORALSTONE_MAUL = registerWeapon("coralstone_maul", () -> {
-            return new BaseMaul(26.5F, (double) AttackSpeed.THIRD, 8.5, 1600);
+            return new BaseMaul(26.5F, AttackSpeed.THIRD, 8.5, 1600);
         });
         CRYSTAL_MAUL = registerWeapon("crystal_maul", CrystalMaul::new);
         ELECTRON_MAUL = registerWeapon("electron_maul", ElectronMaul::new);

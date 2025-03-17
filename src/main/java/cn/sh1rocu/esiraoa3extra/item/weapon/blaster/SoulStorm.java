@@ -21,6 +21,7 @@ public class SoulStorm extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new SoulStormEntity(shooter, this, 60));
+        SoulStormEntity soulStorm = new SoulStormEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, soulStorm);
     }
 }

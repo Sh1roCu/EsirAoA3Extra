@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.FragmentShotEntity;
+import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +22,7 @@ public class Fragment extends BaseBlaster {
 
     @Override
     public void fire(ItemStack blaster, LivingEntity shooter) {
-        shooter.level.addFreshEntity(new FragmentShotEntity(shooter, this, 60));
+        BaseEnergyShot fragmentShot = new FragmentShotEntity(shooter, this, 60);
+        createEnergyShot(blaster, shooter, fragmentShot);
     }
 }

@@ -5,9 +5,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -38,12 +41,17 @@ public class UnderworldStaff extends BaseStaff<Object> {
 
     @Override
     public void cast(World world, ItemStack staff, LivingEntity caster, Object args) {
-        world.addFreshEntity(new WitherShotEntity(caster, this, 60));
+        WitherShotEntity witherShot = new WitherShotEntity(caster, this, 60);
+        createEnergyShot(world, staff, caster, witherShot);
     }
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg(), false)) {
+        CompoundNBT nbt = shot.getPersistentData();
+        float archMageMod = 1;
+        archMageMod += 0.1f * nbt.getInt("archMageLevel");
+        float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             target.push(0, -3.0f, 0);
 
             return true;
@@ -54,9 +62,10 @@ public class UnderworldStaff extends BaseStaff<Object> {
 
     @Override
     public float getDmg() {
-        return 10 * this.getExtraDmg();
+        return 10;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

@@ -10,13 +10,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
@@ -24,6 +22,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.common.registration.AoAItemGroups;
@@ -45,10 +45,6 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     protected final double baseDmg;
     protected final int firingDelay;
     protected final float energyCost;
-
-    protected float extraDmg = 0;
-    protected int amplifierLevel = 0;
-    protected int starLevel = 0;
 
     public BaseBlaster(Item.Properties properties, final double dmg, final int fireDelayTicks, final float energyCost) {
         super(properties, dmg, fireDelayTicks, energyCost);
@@ -101,33 +97,33 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        return super.use(world, player, hand);
-    }
-
-
-    @Override
-    public void onUsingTick(ItemStack stack, LivingEntity player, int count) {
-        this.extraDmg = 0;
-        this.amplifierLevel = 0;
-        this.starLevel = 0;
-        if (player.getItemInHand(Hand.MAIN_HAND).equals(stack)) {
-            float[] attribute = EsirUtil.getAttribute(stack);
-            if (attribute[0] != -1) {
-                this.extraDmg = attribute[0];
-                this.amplifierLevel = (int) attribute[1];
-                this.starLevel = (int) attribute[2];
-            }
-        }
-        super.onUsingTick(stack, player, count);
-    }
-
-    @Override
     public void releaseUsing(ItemStack stack, World world, LivingEntity player, int useTicksRemaining) {
         ItemUtil.damageItem(stack, player, (72000 - useTicksRemaining - 1) / firingDelay, EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.BRACE.get(), stack) > 0 ? EquipmentSlotType.OFFHAND : EquipmentSlotType.MAINHAND);
     }
 
     public abstract void fire(ItemStack blaster, LivingEntity shooter);
+
+    public void createEnergyShot(ItemStack blaster, LivingEntity shooter, BaseEnergyShot... shots) {
+        float extraDmg = 0;
+        float amplifierLevel = 0;
+        float starLevel = 0;
+        if (getWeaponHand(shooter).equals(Hand.MAIN_HAND)) {
+            float[] attribute = EsirUtil.getAttribute(blaster);
+            if (attribute[0] != -1) {
+                extraDmg = attribute[0];
+                amplifierLevel = (int) attribute[1];
+                starLevel = (int) attribute[2];
+            }
+        }
+        float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+
+        CompoundNBT nbt;
+        for (BaseEnergyShot shot : shots) {
+            nbt = shot.getPersistentData();
+            nbt.putFloat("extraDmgMod", extraDmgMod);
+            shooter.level.addFreshEntity(shot);
+        }
+    }
 
     public boolean consumeEnergy(ServerPlayerDataManager plData, ItemStack stack, float cost) {
         return plData.getResource(AoAResources.SPIRIT.get()).consume(cost, false);
@@ -151,7 +147,9 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))), false)) {
+        CompoundNBT nbt = shot.getPersistentData();
+        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * extraDmgMod, false)) {
             doImpactEffect(shot, target, shooter);
 
             return true;
@@ -176,6 +174,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
         return super.getAttributeModifiers(slot, stack);
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getDamage() > 0)

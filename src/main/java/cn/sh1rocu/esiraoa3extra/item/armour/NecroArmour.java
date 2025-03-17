@@ -47,7 +47,7 @@ public class NecroArmour extends AdventArmour {
             if (pl.getHealth() < 4)
                 pl.setHealth(4);
 
-            ((ServerWorld) pl.level).sendParticles(ParticleTypes.HEART, pl.getX(), pl.getBoundingBox().maxY, pl.getZ(), 5, 0, 0, 0, (double) 0);
+            ((ServerWorld) pl.level).sendParticles(ParticleTypes.HEART, pl.getX(), pl.getBoundingBox().maxY, pl.getZ(), 5, 0, 0, 0, 0);
         }
         super.onPostAttackReceived(plData, slots, event);
     }
@@ -75,7 +75,7 @@ public class NecroArmour extends AdventArmour {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.necro_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.necro_armour.desc.2", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(pieceEffectHeader());

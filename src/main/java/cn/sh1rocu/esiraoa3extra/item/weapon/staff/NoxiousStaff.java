@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.potion.Potions;
@@ -13,6 +14,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -47,17 +50,22 @@ public class NoxiousStaff extends BaseStaff<Object> {
 
     @Override
     public void cast(World world, ItemStack staff, LivingEntity caster, Object args) {
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, 0, 0, 0));
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, 0.075f, 0.075f, 0));
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, -0.075f, 0, 0.075f));
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, 0, -0.075f, -0.075f));
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, -0.075f, 0.075f, -0.075f));
-        world.addFreshEntity(new NoxiousShotEntity(caster, this, 60, -0.075f, -0.075f, 0.075f));
+        NoxiousShotEntity noxiousShot1 = new NoxiousShotEntity(caster, this, 60, 0, 0, 0);
+        NoxiousShotEntity noxiousShot2 = new NoxiousShotEntity(caster, this, 60, 0.075f, 0.075f, 0);
+        NoxiousShotEntity noxiousShot3 = new NoxiousShotEntity(caster, this, 60, -0.075f, 0, 0.075f);
+        NoxiousShotEntity noxiousShot4 = new NoxiousShotEntity(caster, this, 60, 0, -0.075f, -0.075f);
+        NoxiousShotEntity noxiousShot5 = new NoxiousShotEntity(caster, this, 60, -0.075f, 0.075f, -0.075f);
+        NoxiousShotEntity noxiousShot6 = new NoxiousShotEntity(caster, this, 60, -0.075f, -0.075f, 0.075f);
+        createEnergyShot(world, staff, caster, noxiousShot1, noxiousShot2, noxiousShot3, noxiousShot4, noxiousShot5, noxiousShot6);
     }
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg(), false)) {
+        CompoundNBT nbt = shot.getPersistentData();
+        float archMageMod = 1;
+        archMageMod += 0.1f * nbt.getInt("archMageLevel");
+        float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             EntityUtil.applyPotions(target, new EffectBuilder(Effects.POISON, 100).level(3));
 
             return true;
@@ -82,9 +90,10 @@ public class NoxiousStaff extends BaseStaff<Object> {
 
     @Override
     public float getDmg() {
-        return 7f * this.getExtraDmg();
+        return 7f;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

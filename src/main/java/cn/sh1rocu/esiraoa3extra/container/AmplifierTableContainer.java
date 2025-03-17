@@ -33,7 +33,7 @@ public class AmplifierTableContainer extends Container {
 
     public AmplifierTableContainer(int screenId, PlayerInventory plInventory, IWorldPosCallable functionCaller) {
         super(AoAContainers.AMPLIFIER_TABLE.get(), screenId);
-        this.player =  plInventory.player;
+        this.player = plInventory.player;
         this.functionCaller = functionCaller;
         this.inputs = new Inventory(3) {
             @Override
