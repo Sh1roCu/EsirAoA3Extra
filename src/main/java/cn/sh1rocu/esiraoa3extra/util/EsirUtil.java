@@ -49,11 +49,11 @@ public class EsirUtil {
                         if (iFormattableTextComponent != null) {
                             String s = iFormattableTextComponent.getString();
                             if (s.contains("效果：伤害+")) {
-                                extraDmg = Float.valueOf(s.substring(s.lastIndexOf("+") + 1).replace("%", "")) * (float) 0.01;
+                                extraDmg = Float.parseFloat(s.substring(s.lastIndexOf("+") + 1).replace("%", "")) * (float) 0.01;
                             } else if (s.contains("增幅等级：+")) {
-                                amplifierLevel = Integer.valueOf(s.substring(s.lastIndexOf("+") + 1));
+                                amplifierLevel = Integer.parseInt(s.substring(s.lastIndexOf("+") + 1));
                             } else if (s.contains("命星：۞")) {
-                                starLevel = Integer.valueOf(s.split("：")[1].length());
+                                starLevel = s.split("：")[1].length();
                             }
                         }
                     } catch (JsonParseException ignored) {
