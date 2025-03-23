@@ -5,6 +5,7 @@ import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Rarity;
@@ -17,7 +18,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-public class DivineBlessingTalisman extends Item {
+public abstract class DivineBlessingTalisman extends Item {
     public DivineBlessingTalisman() {
         super((new Item.Properties()).tab(AoAItemGroups.ESIRAOA3ITEMS).rarity(Rarity.EPIC));
     }
@@ -31,6 +32,16 @@ public class DivineBlessingTalisman extends Item {
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
                 CompoundNBT compoundNBT = offhand.getTag() != null ? offhand.getTag() : new CompoundNBT();
                 if (!compoundNBT.contains("amplifierProtection")) {
+                    Type type = getType();
+                    if (offhand.getItem() instanceof ArmorItem) {
+                        if (type == Type.WEAPON) {
+                            pl.sendMessage(new StringTextComponent("武器神恩符不能保护防具").setStyle(Style.EMPTY.withColor(TextFormatting.RED)), Util.NIL_UUID);
+                            return ActionResult.fail(talisman);
+                        }
+                    } else if (type == Type.ARMOUR) {
+                        pl.sendMessage(new StringTextComponent("防具神恩符不能保护武器").setStyle(Style.EMPTY.withColor(TextFormatting.RED)), Util.NIL_UUID);
+                        return ActionResult.fail(talisman);
+                    }
                     compoundNBT.putBoolean("amplifierProtection", true);
                     offhand.setTag(compoundNBT);
                     pl.setItemSlot(EquipmentSlotType.OFFHAND, offhand);
@@ -44,5 +55,12 @@ public class DivineBlessingTalisman extends Item {
             return ActionResult.success(talisman);
         } else
             return ActionResult.pass(talisman);
+    }
+
+    public abstract Type getType();
+
+    public enum Type {
+        WEAPON,
+        ARMOUR
     }
 }
