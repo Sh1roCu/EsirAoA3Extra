@@ -145,7 +145,7 @@ public class EsirAoA3Extra {
                 return;
             ModifiableAttributeInstance magicModifier = player.getAttribute(EsirAttributes.MAGIC_DAMAGE.get());
             if (magicModifier != null) {
-                ev.setAmount((float) (ev.getAmount() * (1 + magicModifier.getValue())));
+                ev.setAmount((float) (ev.getAmount() *  magicModifier.getValue()));
             }
         }
     }

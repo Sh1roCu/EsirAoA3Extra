@@ -11,8 +11,8 @@ public class EsirAttributes {
     public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.ATTRIBUTES, EsirAoA3Extra.MODID);
     public static final RegistryObject<Attribute> MAGIC_DAMAGE = ATTRIBUTES.register("magic_damage",
             () -> new MagicDamage(
-                    "esiraoa3extra.attribute.magic_damage",
-                    0
+                    "attribute.name.esiraoa3extra.magic_damage",
+                    1
             ).setSyncable(true)
     );
 }
