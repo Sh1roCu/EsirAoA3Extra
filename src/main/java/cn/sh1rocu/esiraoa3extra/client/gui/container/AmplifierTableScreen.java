@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.client.gui.container;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.container.AmplifierTableContainer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,7 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.tslat.aoa3.util.RenderUtil;
 
 public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContainer> {
-    private static final ResourceLocation textures = new ResourceLocation("esiraoa3extra", "textures/gui/containers/amplifier_table.png");
+    private static final ResourceLocation textures = new ResourceLocation(EsirAoA3Extra.MODID, "textures/gui/containers/amplifier_table.png");
 
     public AmplifierTableScreen(AmplifierTableContainer container, PlayerInventory inv, ITextComponent guiTitle) {
         super(container, inv, guiTitle);

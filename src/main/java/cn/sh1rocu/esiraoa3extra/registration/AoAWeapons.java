@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.weapon.blaster.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.bow.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.cannon.*;
@@ -8,8 +9,8 @@ import cn.sh1rocu.esiraoa3extra.item.weapon.greatblade.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.gun.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.maul.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.shotgun.*;
-import cn.sh1rocu.esiraoa3extra.item.weapon.sniper.Terminator;
 import cn.sh1rocu.esiraoa3extra.item.weapon.sniper.*;
+import cn.sh1rocu.esiraoa3extra.item.weapon.sniper.Terminator;
 import cn.sh1rocu.esiraoa3extra.item.weapon.staff.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.sword.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.thrown.*;
@@ -446,7 +447,7 @@ public final class AoAWeapons {
     }
 
     static {
-        WEAPONS = DeferredRegister.create(ForgeRegistries.ITEMS, "esiraoa3extra");
+        WEAPONS = DeferredRegister.create(ForgeRegistries.ITEMS, EsirAoA3Extra.MODID);
         AMETHYST_SWORD = registerWeapon("amethyst_sword", () -> {
             return new BaseSword(ItemUtil.customItemTier(1200, AttackSpeed.NORMAL, 7.5F, 4, 14, AoAItems.AMETHYST));
         });

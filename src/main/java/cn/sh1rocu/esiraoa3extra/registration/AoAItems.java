@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.misc.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
@@ -22,7 +23,7 @@ public class AoAItems {
 
 
     static {
-        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "esiraoa3extra");
+        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, EsirAoA3Extra.MODID);
         AMPLIFIERSTONE_WEAPON = registerItem("amplifierstone_weapon", WeaponAmplifierStone::new);
         AMPLIFIERSTONE_ARMOUR = registerItem("amplifierstone_armour", ArmourAmplifierStone::new);
         RESURRECTION_STONE = registerItem("resurrection_stone", ResurrectionStone::new);

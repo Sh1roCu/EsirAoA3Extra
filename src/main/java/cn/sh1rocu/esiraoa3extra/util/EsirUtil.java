@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.util;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import com.google.gson.JsonParseException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ public class EsirUtil {
 
     public static boolean isEsirArmourOrWeapon(ItemStack stack) {
         ResourceLocation registerName = stack.getItem().getRegistryName();
-        if (registerName != null && registerName.getNamespace().equals("esiraoa3extra") && stack.hasTag() && stack.getTag().contains("display")) {
+        if (registerName != null && registerName.getNamespace().equals(EsirAoA3Extra.MODID) && stack.hasTag() && stack.getTag().contains("display")) {
             CompoundNBT compoundNBT = stack.getTagElement("display");
             if (compoundNBT.contains("Lore")) {
                 //int参数表示ListNBT中的元素类型 8: String  9:List 10:Compound

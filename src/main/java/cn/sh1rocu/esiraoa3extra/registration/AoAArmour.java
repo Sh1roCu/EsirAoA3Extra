@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.armour.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -82,7 +83,7 @@ public final class AoAArmour {
     }
 
     static {
-        ARMOUR = DeferredRegister.create(ForgeRegistries.ITEMS, "esiraoa3extra");
+        ARMOUR = DeferredRegister.create(ForgeRegistries.ITEMS, EsirAoA3Extra.MODID);
         ACHELOS_HELMET = registerArmour("achelos_helmet", AchelosHelmet::new);
         OCEANUS_HELMET = registerArmour("oceanus_helmet", OceanusHelmet::new);
         SEALORD_HELMET = registerArmour("sealord_helmet", SealordHelmet::new);

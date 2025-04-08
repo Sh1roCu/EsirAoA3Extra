@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.client.gui.container.AmplifierTableScreen;
 import cn.sh1rocu.esiraoa3extra.container.AmplifierTableContainer;
 import net.minecraft.client.gui.ScreenManager;
@@ -31,7 +32,7 @@ public final class AoAContainers {
     }
 
     static {
-        CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, "esiraoa3extra");
+        CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, EsirAoA3Extra.MODID);
         AMPLIFIER_TABLE = registerContainer("amplifier_table", (screenId, inventory, buffer) -> new AmplifierTableContainer(screenId, inventory, IWorldPosCallable.create(inventory.player.level, buffer.readBlockPos())));
     }
 }

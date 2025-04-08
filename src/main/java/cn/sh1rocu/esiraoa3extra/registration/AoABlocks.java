@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
+import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.block.AmplifierTable;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -25,9 +26,9 @@ import java.util.function.Supplier;
 
 
 public final class AoABlocks {
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "esiraoa3extra");
-    public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "esiraoa3extra");
-    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, "esiraoa3extra");
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, EsirAoA3Extra.MODID);
+    public static final DeferredRegister<Item> BLOCK_ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, EsirAoA3Extra.MODID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, EsirAoA3Extra.MODID);
     public static final HashMap<RegistryObject<? extends Block>, CustomRenderType> CUSTOM_RENDER_TYPES = new HashMap<>();
     public static final RegistryObject<Block> AMPLIFIER_TABLE = registerBlock("amplifier_table", AmplifierTable::new, AoAItemGroups.ESIRAOA3ITEMS, Rarity.EPIC);
 

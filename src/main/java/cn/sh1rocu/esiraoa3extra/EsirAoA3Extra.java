@@ -13,7 +13,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,15 +39,15 @@ import software.bernie.aoa3.geckolib3.GeckoLib;
 
 import java.util.UUID;
 
-// The value here should match an entry in the META-INF/mods.toml file
-@Mod("esiraoa3extra")
+@Mod(EsirAoA3Extra.MODID)
 public class EsirAoA3Extra {
 
-    // Directly reference a log4j logger.
+    public static final String MODID = "esiraoa3extra";
     private static final Logger LOGGER = LogManager.getLogger();
 
     public EsirAoA3Extra() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        EsirAttributes.ATTRIBUTES.register(modEventBus);
         AoAWeapons.WEAPONS.register(modEventBus);
         AoAArmour.ARMOUR.register(modEventBus);
         AoABlocks.BLOCKS.register(modEventBus);
@@ -110,7 +113,7 @@ public class EsirAoA3Extra {
     }
 
     @SubscribeEvent
-    public void onPlayerDamage(LivingHurtEvent ev) {
+    public void onMaulDamage(LivingHurtEvent ev) {
         Entity attacker = ev.getSource().getEntity();
         if (DamageUtil.isMeleeDamage(ev.getSource()) && attacker instanceof LivingEntity) {
             ItemStack weapon = ((LivingEntity) attacker).getItemInHand(Hand.MAIN_HAND);
@@ -125,6 +128,24 @@ public class EsirAoA3Extra {
                     starLevel = (int) attribute[2];
                 }
                 ev.setAmount((((BaseMaul) weapon.getItem()).getAttackDamage() + 1) * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onMagicDamage(LivingHurtEvent ev) {
+        Entity attacker = ev.getSource().getEntity();
+        if (ev.getSource().isMagic()) {
+            PlayerEntity player = null;
+            if (attacker instanceof PlayerEntity)
+                player = (PlayerEntity) attacker;
+            else if (attacker instanceof ProjectileEntity && ((ProjectileEntity) attacker).getOwner() instanceof PlayerEntity)
+                player = (PlayerEntity) ((ProjectileEntity) attacker).getOwner();
+            if (player == null)
+                return;
+            ModifiableAttributeInstance magicModifier = player.getAttribute(EsirAttributes.MAGIC_DAMAGE.get());
+            if (magicModifier != null) {
+                ev.setAmount((float) (ev.getAmount() * (1 + magicModifier.getValue())));
             }
         }
     }
