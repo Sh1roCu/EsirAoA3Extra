@@ -116,11 +116,13 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
             }
         }
         float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        int rechargeLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), blaster);
 
         CompoundNBT nbt;
         for (BaseEnergyShot shot : shots) {
             nbt = shot.getPersistentData();
             nbt.putFloat("extraDmgMod", extraDmgMod);
+            nbt.putInt("rechargeLevel", rechargeLevel);
             shooter.level.addFreshEntity(shot);
         }
     }
@@ -149,7 +151,8 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
         CompoundNBT nbt = shot.getPersistentData();
         float extraDmgMod = nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * extraDmgMod, false)) {
+        float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
+        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * rechargeMod * extraDmgMod, false)) {
             doImpactEffect(shot, target, shooter);
 
             return true;
@@ -178,7 +181,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getDamage() > 0)
-            tooltip.add(1, LocaleUtil.getLocaleMessage("items.description.damage.blaster", TextFormatting.DARK_RED, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage(), 1))));
+            tooltip.add(1, LocaleUtil.getLocaleMessage("items.description.damage.blaster", TextFormatting.DARK_RED, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.04f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), stack))), 1))));
 
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.fire", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.effect", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
