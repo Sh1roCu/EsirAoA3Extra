@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = ShellEnchantment.class, remap = false)
+@Mixin(ShellEnchantment.class)
 public class ShellEnchantmentMixin {
     @Inject(method = "canEnchant", at = @At("RETURN"), cancellable = true)
     private void shellEnchantmentMixin$canEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
