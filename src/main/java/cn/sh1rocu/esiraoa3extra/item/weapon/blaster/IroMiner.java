@@ -55,8 +55,11 @@ public class IroMiner extends BaseBlaster {
                 cap.setValue(1.0f);
             }
         }
+        CompoundNBT nbt = shot.getPersistentData();
+        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
 
-        return DamageUtil.dealBlasterDamage(shooter, target, shot, (float) getDamage() * damageMod, false);
+        return DamageUtil.dealBlasterDamage(shooter, target, shot, (float) getDamage() * damageMod * extraDmgMod * rechargeMod, false);
     }
 
     @Nullable

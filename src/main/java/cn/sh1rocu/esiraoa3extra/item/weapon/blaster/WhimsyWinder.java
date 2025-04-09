@@ -4,6 +4,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -46,8 +47,11 @@ public class WhimsyWinder extends BaseBlaster {
         float splitDmg = (float) (getDamage() / nearbyTargets.size() * (Math.pow(1.05, nearbyTargets.size())));
         boolean success = false;
 
+        CompoundNBT nbt = shot.getPersistentData();
+        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
         for (Entity entity : nearbyTargets) {
-            success |= DamageUtil.dealBlasterDamage(shooter, entity, shot, splitDmg, false);
+            success |= DamageUtil.dealBlasterDamage(shooter, entity, shot, splitDmg * extraDmgMod * rechargeMod, false);
         }
 
         return success;
