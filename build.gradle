@@ -95,7 +95,9 @@ minecraft {
             }
         }
 
-        client {}
+        client {
+            args '--username, Sh1roCu'
+        }
 
         server {
             args '--nogui'
