@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,6 +22,7 @@ import net.tslat.aoa3.content.entity.projectile.cannon.CannonballEntity;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.NumberUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -100,7 +102,10 @@ public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cann
     @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        super.appendHoverText(stack, world, tooltip, flag);
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) this.getDamage() * (1.0F + 0.1F * (float) EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack)), 2))));
         tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText("items.description.cannon.damage", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.gun.firingSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(20.0F / (float) this.getFiringDelay(), 2))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.ammo.item", LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, this.getAmmoItem().getDescription()));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this.isFullAutomatic() ? "items.description.gun.fully_automatic" : "items.description.gun.semi_automatic", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO, new ITextComponent[0]));
     }
 }
