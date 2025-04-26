@@ -48,7 +48,7 @@ public class WhimsyWinder extends BaseBlaster {
         boolean success = false;
 
         CompoundNBT nbt = shot.getPersistentData();
-        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
         for (Entity entity : nearbyTargets) {
             success |= DamageUtil.dealBlasterDamage(shooter, entity, shot, splitDmg * extraDmgMod * rechargeMod, false);

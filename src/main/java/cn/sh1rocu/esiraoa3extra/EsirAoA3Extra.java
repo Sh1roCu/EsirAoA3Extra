@@ -40,7 +40,9 @@ import software.bernie.aoa3.geckolib3.GeckoLib;
 import java.util.UUID;
 
 @Mod(EsirAoA3Extra.MODID)
-public class EsirAoA3Extra {
+public class
+
+EsirAoA3Extra {
 
     public static final String MODID = "esiraoa3extra";
     private static final Logger LOGGER = LogManager.getLogger();
@@ -145,7 +147,7 @@ public class EsirAoA3Extra {
                 return;
             ModifiableAttributeInstance magicModifier = player.getAttribute(EsirAttributes.MAGIC_DAMAGE.get());
             if (magicModifier != null) {
-                ev.setAmount((float) (ev.getAmount() *  magicModifier.getValue()));
+                ev.setAmount((float) (ev.getAmount() * magicModifier.getValue()));
             }
         }
     }

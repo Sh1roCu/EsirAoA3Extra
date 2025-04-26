@@ -110,7 +110,7 @@ public abstract class BaseThrownWeapon extends BaseGun {
     public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, float bulletDmgMultiplier) {
         float shellMod = 1;
         CompoundNBT nbt = bullet.getPersistentData();
-        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         if (bullet.getHand() != null)
             shellMod += 0.1f * nbt.getInt("shellLevel");
         if (target != null && dmg > 0.0f && DamageUtil.dealRangedDamage(target, shooter, bullet, (float) dmg * bulletDmgMultiplier * shellMod * extraDmgMod))

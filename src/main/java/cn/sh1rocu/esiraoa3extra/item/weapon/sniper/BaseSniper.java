@@ -100,7 +100,7 @@ public abstract class BaseSniper extends net.tslat.aoa3.content.item.weapon.snip
         if (target != null) {
             float shellMod = 1;
             CompoundNBT nbt = bullet.getPersistentData();
-            float extraDmgMod = nbt.getFloat("extraDmgMod");
+            float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
             if (bullet.getHand() != null)
                 shellMod += 0.1f * nbt.getInt("shellLevel");
 

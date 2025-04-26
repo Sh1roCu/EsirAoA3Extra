@@ -5,6 +5,9 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "esiraoa3extra.refmap.json",
   "mixins": [
+    "BaseGunMixin",
+    "BaseStaffMixin",
+    "DamageUtilMixin",
     "PlayerMixin",
     "ShellEnchantmentMixin"
   ],

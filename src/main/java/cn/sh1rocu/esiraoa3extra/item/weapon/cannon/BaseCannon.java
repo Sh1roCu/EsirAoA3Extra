@@ -81,7 +81,7 @@ public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cann
             CompoundNBT nbt = bullet.getPersistentData();
             if (bullet.getHand() != null)
                 shellMod += 0.1f * nbt.getInt("shellLevel");
-            float extraDmgMod = nbt.getFloat("extraDmgMod");
+            float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
             if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod)) {
                 if (target instanceof PlayerEntity && ((PlayerEntity) target).isBlocking())
                     ((PlayerEntity) target).disableShield(true);

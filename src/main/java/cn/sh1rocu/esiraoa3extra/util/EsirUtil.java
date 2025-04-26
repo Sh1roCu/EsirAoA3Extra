@@ -31,6 +31,17 @@ public class EsirUtil {
         return false;
     }
 
+    public static boolean isPlayerEnvironmentallyProtected(ItemStack stack) {
+        if (stack.hasTag() && stack.getTag().contains("display")) {
+            CompoundNBT compoundNBT = stack.getTagElement("display");
+            if (compoundNBT.contains("Lore")) {
+                ListNBT loreList = compoundNBT.getList("Lore", 8);
+                return loreList.getAsString().contains("提供自身氧气");
+            }
+        }
+        return false;
+    }
+
     public static float[] getAttribute(ItemStack stack) {
         if (stack == null || stack.isEmpty()) return null;
         float extraDmg = 0;

@@ -65,7 +65,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
         if (target != null) {
             float shellMod = 1;
             CompoundNBT nbt = bullet.getPersistentData();
-            float extraDmgMod = nbt.getFloat("extraDmgMod");
+            float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
             if (bullet.getHand() != null)
                 shellMod += 0.1f * nbt.getInt("shellLevel");
             if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod)) {

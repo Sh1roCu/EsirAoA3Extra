@@ -150,7 +150,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
         CompoundNBT nbt = shot.getPersistentData();
-        float extraDmgMod = nbt.getFloat("extraDmgMod");
+        float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
         if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * rechargeMod * extraDmgMod, false)) {
             doImpactEffect(shot, target, shooter);
