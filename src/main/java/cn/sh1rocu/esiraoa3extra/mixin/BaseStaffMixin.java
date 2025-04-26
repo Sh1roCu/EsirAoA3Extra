@@ -31,7 +31,8 @@ public class BaseStaffMixin {
     private int reduceCD(int origin) {
         if (esiraoa3extra$itemStack.getOrCreateTag().contains("CD")) {
             double cdMod = esiraoa3extra$itemStack.getOrCreateTag().getDouble("CD");
-            return (int) (origin * (1 - cdMod));
+            int result = (int) (origin * (1 - cdMod));
+            return Math.max(result, 0);
         }
         return origin;
     }

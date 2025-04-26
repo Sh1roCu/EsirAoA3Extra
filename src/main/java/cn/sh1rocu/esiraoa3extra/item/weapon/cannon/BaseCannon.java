@@ -104,8 +104,9 @@ public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cann
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) this.getDamage() * (1.0F + 0.1F * (float) EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack)), 2))));
         tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText("items.description.cannon.damage", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.gun.firingSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(20.0F / (this.getFiringDelay() * (float) (stack.getOrCreateTag().contains("CD") ? stack.getOrCreateTag().getDouble("CD") : 1)), 2))));
+        float cd = this.getFiringDelay() * (float) (stack.getOrCreateTag().contains("CD") ? 1 - stack.getOrCreateTag().getDouble("CD") : 1);
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.gun.firingSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(cd <= 0 ? "无限制" : NumberUtil.roundToNthDecimalPlace(20.0F / cd, 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.ammo.item", LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, this.getAmmoItem().getDescription()));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this.isFullAutomatic() ? "items.description.gun.fully_automatic" : "items.description.gun.semi_automatic", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO, new ITextComponent[0]));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this.isFullAutomatic() ? "items.description.gun.fully_automatic" : "items.description.gun.semi_automatic", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
     }
 }
