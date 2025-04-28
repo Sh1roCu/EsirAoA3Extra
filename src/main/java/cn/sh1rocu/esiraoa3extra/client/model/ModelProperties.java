@@ -68,8 +68,12 @@ public final class ModelProperties {
             registerItemProperty(bow, "pull", (stack, world, entity) -> {
                 if (entity == null || entity.getUseItem() != stack)
                     return 0;
-
-                return ((BaseBow) stack.getItem()).getDrawSpeedMultiplier() * (float) (stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
+                float result = 1;
+                if (stack.getOrCreateTag().contains("CD")) {
+                    double cdMod = stack.getOrCreateTag().getDouble("CD");
+                    result = (float) Math.max(1 + cdMod, 0);
+                }
+                return ((BaseBow) stack.getItem()).getDrawSpeedMultiplier() * result * ((stack.getUseDuration() - entity.getUseItemRemainingTicks())) / 20.0F;
             });
             registerItemProperty(bow, "pulling", (stack, world, entity) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0);
         }

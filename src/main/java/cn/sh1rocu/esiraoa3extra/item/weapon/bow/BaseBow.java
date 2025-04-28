@@ -25,6 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.NumberUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -49,7 +50,12 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
             PlayerEntity pl = (PlayerEntity) shooter;
             boolean infiniteAmmo = pl.isCreative() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
             ItemStack ammoStack = this.findAmmo(pl, stack, infiniteAmmo);
-            int charge = (int) ((float) (this.getUseDuration(stack) - timeLeft) * this.getDrawSpeedMultiplier());
+            float result = 1;
+            if (stack.getOrCreateTag().contains("CD")) {
+                double cdMod = stack.getOrCreateTag().getDouble("CD");
+                result = (float) Math.max(1 + cdMod, 0);
+            }
+            int charge = (int) ((this.getUseDuration(stack) - timeLeft) * getDrawSpeedMultiplier() * result);
             charge = ForgeEventFactory.onArrowLoose(stack, world, pl, charge, !ammoStack.isEmpty() || infiniteAmmo);
             if (charge >= 0) {
                 if (!ammoStack.isEmpty() || infiniteAmmo) {
@@ -162,7 +168,12 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(Double.toString(getDamage()))));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(Double.toString(((int) (72000 / getDrawSpeedMultiplier()) / 720) / (double) 100))));
+        float result = 1;
+        if (stack.getOrCreateTag().contains("CD")) {
+            double cdMod = stack.getOrCreateTag().getDouble("CD");
+            result = (float) Math.max(1 + cdMod, 0);
+        }
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) ((int) (72000 / (getDrawSpeedMultiplier() * result)) / 720) / 100, 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(Items.ARROW.getDescriptionId())));
     }
 }
