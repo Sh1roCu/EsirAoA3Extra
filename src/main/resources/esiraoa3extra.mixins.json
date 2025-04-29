@@ -9,6 +9,7 @@
     "BaseGunMixin",
     "BaseStaffMixin",
     "DamageUtilMixin",
+    "EnchantmentMixin",
     "PlayerMixin",
     "ShellEnchantmentMixin"
   ],

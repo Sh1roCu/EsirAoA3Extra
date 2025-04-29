@@ -3,15 +3,11 @@ package cn.sh1rocu.esiraoa3extra.mixin;
 import net.minecraft.item.ItemStack;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(value = BaseGun.class, remap = false)
 public abstract class BaseGunMixin {
-    @Shadow
-    public abstract int getFiringDelay();
-
     @ModifyVariable(
             method = "onUsingTick",
             at = @At(value = "STORE"),

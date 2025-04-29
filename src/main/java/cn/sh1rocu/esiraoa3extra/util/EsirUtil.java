@@ -2,6 +2,7 @@ package cn.sh1rocu.esiraoa3extra.util;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import com.google.gson.JsonParseException;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -10,10 +11,23 @@ import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.*;
+import shadows.apotheosis.ApotheosisObjects;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class EsirUtil {
+    public static final List<String> BLACKLIST_ENCHANTMENTS = Arrays.asList(
+            Enchantments.FROST_WALKER.getDescriptionId(),
+            ApotheosisObjects.DEPTH_MINER.getDescriptionId(),
+            ApotheosisObjects.SEA_INFUSION.getDescriptionId(),
+            ApotheosisObjects.HELL_INFUSION.getDescriptionId(),
+            ApotheosisObjects.NATURES_BLESSING.getDescriptionId(),
+            ApotheosisObjects.TRUE_INFINITY.getDescriptionId(),
+            ApotheosisObjects.CAPTURING.getDescriptionId()
+    );
+
     private static final float BROKEN = 0.3f;
     private static final float SAME = 4.7f;
     private static final int DECREASE = 5;
