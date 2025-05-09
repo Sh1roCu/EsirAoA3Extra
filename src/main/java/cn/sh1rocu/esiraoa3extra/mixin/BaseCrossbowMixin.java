@@ -20,8 +20,7 @@ public abstract class BaseCrossbowMixin {
             method = "use",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/tslat/aoa3/content/item/weapon/crossbow/BaseCrossbow;fireProjectiles(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;FF)V",
-                    remap = false
+                    target = "Lnet/tslat/aoa3/content/item/weapon/crossbow/BaseCrossbow;fireProjectiles(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;FF)V"
             )
     )
     public void esir$preFired(Level world, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
