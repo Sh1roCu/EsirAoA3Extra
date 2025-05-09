@@ -1,7 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.gun;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.Tags;
 import net.tslat.aoa3.common.registration.AoAItemGroups;
 import net.tslat.aoa3.common.registration.AoASounds;

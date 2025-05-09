@@ -1,17 +1,17 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -50,13 +50,13 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
     @Nullable
     @Override
     public List<LivingEntity> checkPreconditions(LivingEntity caster, ItemStack staff) {
-        List<LivingEntity> targets = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10, 1, 10), entity -> entity instanceof IMob && entity.isAlive());
+        List<LivingEntity> targets = caster.level.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(10, 1, 10), entity -> entity instanceof Enemy && entity.isAlive());
 
         return targets.isEmpty() ? null : targets;
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
         for (float x = -1; x <= 1; x += 0.125f) {
             for (float z = -1; z <= 1; z += 0.125f) {
                 world.addFreshEntity(new LyonicShotEntity(caster, this, 1, x, 0, z));
@@ -66,11 +66,11 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        if (EntityUtil.isHostileMob(target) && target.level instanceof ServerWorld) {
-            EntityUtil.applyPotions(target, new EffectBuilder(Effects.WITHER, 100).level(2));
+        if (EntityUtil.isHostileMob(target) && target.level instanceof ServerLevel) {
+            EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.WITHER, 100).level(2));
 
             if (RandomUtil.oneInNChance(150))
-                WorldUtil.spawnLightning((ServerWorld) target.level, shooter instanceof ServerPlayerEntity ? (ServerPlayerEntity) shooter : null, target.getX(), target.getY(), target.getZ(), true);
+                WorldUtil.spawnLightning((ServerLevel) target.level, shooter instanceof ServerPlayer ? (ServerPlayer) shooter : null, target.getX(), target.getY(), target.getZ(), true);
 
             return true;
         }
@@ -80,7 +80,7 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.WITHERS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));

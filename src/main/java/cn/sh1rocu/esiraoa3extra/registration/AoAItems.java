@@ -2,7 +2,7 @@ package cn.sh1rocu.esiraoa3extra.registration;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.misc.*;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

@@ -1,7 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.block.blockentity;
 
 import cn.sh1rocu.esiraoa3extra.registration.AoATileEntities;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.aoa3.geckolib3.core.IAnimatable;
 import software.bernie.aoa3.geckolib3.core.PlayState;
 import software.bernie.aoa3.geckolib3.core.builder.AnimationBuilder;
@@ -11,7 +11,7 @@ import software.bernie.aoa3.geckolib3.core.manager.AnimationData;
 import software.bernie.aoa3.geckolib3.core.manager.AnimationFactory;
 import software.bernie.aoa3.geckolib3.util.GeckoLibUtil;
 
-public class AmplifierTableTileEntity extends TileEntity implements IAnimatable {
+public class AmplifierTableTileEntity extends BlockEntity implements IAnimatable {
 
     private final AnimationFactory manager = GeckoLibUtil.createFactory(this);
 

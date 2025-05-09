@@ -1,8 +1,8 @@
 package cn.sh1rocu.esiraoa3extra.item.misc;
 
 import cn.sh1rocu.esiraoa3extra.registration.AoAItemGroups;
-import net.minecraft.item.Item;
-import net.minecraft.item.Rarity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 
 public class AttributeExchangeStone extends Item {
     public AttributeExchangeStone() {

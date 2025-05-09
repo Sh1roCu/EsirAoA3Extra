@@ -2,7 +2,7 @@ package cn.sh1rocu.esiraoa3extra.block.model;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.block.blockentity.AmplifierTableTileEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.aoa3.geckolib3.model.AnimatedGeoModel;
 
 public class AmplifierTableGeoModel extends AnimatedGeoModel<AmplifierTableTileEntity> {

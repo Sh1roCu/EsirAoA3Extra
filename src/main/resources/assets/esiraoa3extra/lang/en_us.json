@@ -2016,5 +2016,5 @@
   "items.description.unbreakable": "Unbreakable",
   "items.description.vulcane.target": "Can only be used within 5 seconds of last attack taken",
   "items.description.vulcane.use": "Usable when at least 50 Rage has been accrued",
-  "itemGroup.esiraoa3extra.all": "Esir-AoA All Items"
+  "CreativeModeTab.esiraoa3extra.all": "Esir-AoA All Items"
 }

@@ -3,25 +3,25 @@ package cn.sh1rocu.esiraoa3extra.item.weapon.blaster;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -87,8 +87,8 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.NONE;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.NONE;
     }
 
     @Override
@@ -97,8 +97,8 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, World world, LivingEntity player, int useTicksRemaining) {
-        ItemUtil.damageItem(stack, player, (72000 - useTicksRemaining - 1) / firingDelay, EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.BRACE.get(), stack) > 0 ? EquipmentSlotType.OFFHAND : EquipmentSlotType.MAINHAND);
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity player, int useTicksRemaining) {
+        ItemUtil.damageItem(stack, player, (72000 - useTicksRemaining - 1) / firingDelay, EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.BRACE.get(), stack) > 0 ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
     }
 
     public abstract void fire(ItemStack blaster, LivingEntity shooter);
@@ -107,7 +107,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
         float extraDmg = 0;
         float amplifierLevel = 0;
         float starLevel = 0;
-        if (getWeaponHand(shooter).equals(Hand.MAIN_HAND)) {
+        if (getWeaponHand(shooter).equals(InteractionHand.MAIN_HAND)) {
             float[] attribute = EsirUtil.getAttribute(blaster);
             if (attribute[0] != -1) {
                 extraDmg = attribute[0];
@@ -118,7 +118,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
         float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
         int rechargeLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), blaster);
 
-        CompoundNBT nbt;
+        CompoundTag nbt;
         for (BaseEnergyShot shot : shots) {
             nbt = shot.getPersistentData();
             nbt.putFloat("extraDmgMod", extraDmgMod);
@@ -133,23 +133,23 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        stack.getOrCreateTag().putInt("HideFlags", ItemStack.TooltipDisplayFlags.MODIFIERS.getMask());
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        stack.getOrCreateTag().putInt("HideFlags", ItemStack.TooltipPart.MODIFIERS.getMask());
         return null;
     }
 
     @Override
-    public Hand getWeaponHand(LivingEntity holder) {
-        return Hand.MAIN_HAND;
+    public InteractionHand getWeaponHand(LivingEntity holder) {
+        return InteractionHand.MAIN_HAND;
     }
 
     @Override
-    public void doBlockImpact(BaseEnergyShot shot, Vector3d hitPos, LivingEntity shooter) {
+    public void doBlockImpact(BaseEnergyShot shot, Vec3 hitPos, LivingEntity shooter) {
     }
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        CompoundNBT nbt = shot.getPersistentData();
+        CompoundTag nbt = shot.getPersistentData();
         float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
         if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * rechargeMod * extraDmgMod, false)) {
@@ -170,8 +170,8 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        if (slot == EquipmentSlotType.MAINHAND)
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot == EquipmentSlot.MAINHAND)
             return attributeModifiers;
 
         return super.getAttributeModifiers(slot, stack);
@@ -179,16 +179,16 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         if (getDamage() > 0)
-            tooltip.add(1, LocaleUtil.getLocaleMessage("items.description.damage.blaster", TextFormatting.DARK_RED, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.04f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), stack))), 1))));
+            tooltip.add(1, LocaleUtil.getLocaleMessage("items.description.damage.blaster", ChatFormatting.DARK_RED, new TextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.04f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), stack))), 1))));
 
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.fire", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.effect", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(20 / (float) getFiringDelay(), 2))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new TextComponent(NumberUtil.roundToNthDecimalPlace(20 / (float) getFiringDelay(), 2))));
 
         float energyConsumption = (1 + (0.3f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.GREED.get(), stack))) * getEnergyCost() * Math.max(0, (1 - 0.15f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), stack)));
 
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, new StringTextComponent(NumberUtil.roundToNthDecimalPlace(energyConsumption, 2)), AoAResources.SPIRIT.get().getName()));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, new TextComponent(NumberUtil.roundToNthDecimalPlace(energyConsumption, 2)), AoAResources.SPIRIT.get().getName()));
     }
 }

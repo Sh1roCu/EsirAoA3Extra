@@ -1,17 +1,17 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -52,21 +52,21 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
         for (LivingEntity entity : args) {
             entity.setSecondsOnFire(5);
-            EntityUtil.applyPotions(entity, new EffectBuilder(Effects.GLOWING, 100));
+            EntityUtil.applyPotions(entity, new EffectBuilder(MobEffects.GLOWING, 100));
             world.addFreshEntity(new FireworkRocketEntity(world, entity.getX(), entity.getBoundingBox().maxY, entity.getZ(), makeFireworksStack()));
         }
     }
 
     private ItemStack makeFireworksStack() {
         ItemStack fireworks = new ItemStack(Items.FIREWORK_ROCKET, 1);
-        CompoundNBT explosionTag = new CompoundNBT();
-        CompoundNBT fireworksTag = new CompoundNBT();
-        CompoundNBT finalTag = new CompoundNBT();
-        CompoundNBT wrapperTag = new CompoundNBT();
-        ListNBT finalTagList = new ListNBT();
+        CompoundTag explosionTag = new CompoundTag();
+        CompoundTag fireworksTag = new CompoundTag();
+        CompoundTag finalTag = new CompoundTag();
+        CompoundTag wrapperTag = new CompoundTag();
+        ListTag finalTagList = new ListTag();
 
         explosionTag.putBoolean("Trail", true);
         explosionTag.putIntArray("Colors", new int[]{0});
@@ -83,7 +83,7 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         super.appendHoverText(stack, world, tooltip, flag);
     }

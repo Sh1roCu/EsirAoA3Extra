@@ -4,29 +4,29 @@ import cn.sh1rocu.esiraoa3extra.item.weapon.thrown.BaseThrownWeapon;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.IndirectEntityDamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -68,8 +68,8 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
         attributeModifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MAINHAND, "AoAGunMainHand", -getHolsterSpeed(), AttributeModifier.Operation.MULTIPLY_TOTAL));
     }
 
-    public BaseGun(ItemGroup itemGroup, final double dmg, final int durability, final int fireDelayTicks, final float recoilMod) {
-        this(new Item.Properties().tab(itemGroup).durability(durability), dmg, fireDelayTicks, recoilMod);
+    public BaseGun(CreativeModeTab CreativeModeTab, final double dmg, final int durability, final int fireDelayTicks, final float recoilMod) {
+        this(new Item.Properties().tab(CreativeModeTab).durability(durability), dmg, fireDelayTicks, recoilMod);
     }
 
     public double getDamage() {
@@ -115,8 +115,8 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
         return AoAItems.LIMONITE_BULLET.get();
     }
 
-    public Hand getGunHand(ItemStack stack) {
-        return EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.BRACE.get(), stack) > 0 ? Hand.OFF_HAND : Hand.MAIN_HAND;
+    public InteractionHand getGunHand(ItemStack stack) {
+        return EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.BRACE.get(), stack) > 0 ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
     }
 
     @Override
@@ -133,17 +133,17 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
         return true;
     }
 
-    protected boolean fireGun(LivingEntity shooter, ItemStack stack, Hand hand) {
+    protected boolean fireGun(LivingEntity shooter, ItemStack stack, InteractionHand hand) {
         BaseBullet bullet = findAndConsumeAmmo(shooter, stack, hand);
 
         if (bullet == null)
             return false;
-        CompoundNBT nbt = bullet.getPersistentData();
+        CompoundTag nbt = bullet.getPersistentData();
         float extraDmg = 0;
         float amplifierLevel = 0;
         float starLevel = 0;
         int shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
-        if (getGunHand(stack).equals(Hand.MAIN_HAND)) {
+        if (getGunHand(stack).equals(InteractionHand.MAIN_HAND)) {
             float[] attribute = EsirUtil.getAttribute(stack);
             if (attribute[0] != -1) {
                 extraDmg = attribute[0];
@@ -162,31 +162,31 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
         return true;
     }
 
-    public void doRecoil(ServerPlayerEntity player, ItemStack stack, Hand hand) {
+    public void doRecoil(ServerPlayer player, ItemStack stack, InteractionHand hand) {
         int control = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.CONTROL.get(), stack);
         float recoilAmount = getRecoilForShot(stack, player) * 2 * (1 - control * 0.15f);
 
-        AoAPackets.messagePlayer(player, new GunRecoilPacket(hand == Hand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount, getFiringDelay()));
+        AoAPackets.messagePlayer(player, new GunRecoilPacket(hand == InteractionHand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount, getFiringDelay()));
     }
 
-    protected void doFiringEffects(LivingEntity shooter, BaseBullet bullet, ItemStack stack, Hand hand) {
+    protected void doFiringEffects(LivingEntity shooter, BaseBullet bullet, ItemStack stack, InteractionHand hand) {
         doFiringSound(shooter, bullet, stack, hand);
 
-        ((ServerWorld) shooter.level).sendParticles(ParticleTypes.SMOKE, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
+        ((ServerLevel) shooter.level).sendParticles(ParticleTypes.SMOKE, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
 
         if (dmg > 15) {
             if (dmg > 20) {
-                ((ServerWorld) shooter.level).sendParticles(ParticleTypes.FLAME, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
+                ((ServerLevel) shooter.level).sendParticles(ParticleTypes.FLAME, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
             }
 
-            ((ServerWorld) shooter.level).sendParticles(ParticleTypes.POOF, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
+            ((ServerLevel) shooter.level).sendParticles(ParticleTypes.POOF, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
         }
     }
 
     public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, float bulletDmgMultiplier) {
         if (target != null) {
             float shellMod = 1;
-            CompoundNBT nbt = bullet.getPersistentData();
+            CompoundTag nbt = bullet.getPersistentData();
             float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
             if (bullet.getHand() != null)
                 shellMod += 0.1f * nbt.getInt("shellLevel");
@@ -202,39 +202,39 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
     protected void doImpactEffect(Entity target, LivingEntity shooter, BaseBullet bullet, float bulletDmgMultiplier) {
     }
 
-    protected void doFiringSound(LivingEntity shooter, BaseBullet bullet, ItemStack stack, Hand hand) {
+    protected void doFiringSound(LivingEntity shooter, BaseBullet bullet, ItemStack stack, InteractionHand hand) {
         //if (getFiringSound() != null)
-        //	shooter.level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), getFiringSound(), SoundCategory.PLAYERS, 1.0f, getFiringSoundPitchAdjust() + (float)random.nextGaussian() * 0.075f);
+        //	shooter.level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), getFiringSound(), SoundSource.PLAYERS, 1.0f, getFiringSoundPitchAdjust() + (float)random.nextGaussian() * 0.075f);
 
         if (getFiringSound() != null)
             new SoundBuilder(getFiringSound()).isPlayer().pitch(getFiringSoundPitchAdjust()).varyPitch(0.075f).followEntity(shooter).play();
     }
 
     @Nullable
-    public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, Hand hand) {
-        if (shooter.getType() != EntityType.PLAYER || ItemUtil.findInventoryItem((PlayerEntity) shooter, new ItemStack(getAmmoItem()), !shooter.level.isClientSide(), 1 + EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.GREED.get(), gunStack)))
+    public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
+        if (shooter.getType() != EntityType.PLAYER || ItemUtil.findInventoryItem((Player) shooter, new ItemStack(getAmmoItem()), !shooter.level.isClientSide(), 1 + EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.GREED.get(), gunStack)))
             return createProjectileEntity(shooter, gunStack, hand);
 
         return null;
     }
 
-    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, Hand hand) {
+    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
         return new LimoniteBulletEntity(shooter, this, hand, 120, 0);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
-        stack.getOrCreateTag().putInt("HideFlags", ItemStack.TooltipDisplayFlags.MODIFIERS.getMask());
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        stack.getOrCreateTag().putInt("HideFlags", ItemStack.TooltipPart.MODIFIERS.getMask());
 
         return null;
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        if (slot == EquipmentSlotType.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot == EquipmentSlot.MAINHAND) {
             return HashMultimap.create(attributeModifiers);
-        } else if (slot == EquipmentSlotType.OFFHAND) {
+        } else if (slot == EquipmentSlot.OFFHAND) {
             Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create(attributeModifiers);
 
             multimap.put(Attributes.MOVEMENT_SPEED, BraceEnchantment.BRACE_DEBUFF);
@@ -247,10 +247,10 @@ public abstract class BaseGun extends net.tslat.aoa3.content.item.weapon.gun.Bas
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2))));
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.gun", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new TextComponent(NumberUtil.roundToNthDecimalPlace((float) getDamage() * (1 + (0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack))), 2))));
         float cd = this.getFiringDelay() * (float) (stack.getOrCreateTag().contains("CD") ? 1 - stack.getOrCreateTag().getDouble("CD") : 1);
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(cd <= 0 ? "无限制" : NumberUtil.roundToNthDecimalPlace(20 / cd, 2))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new TextComponent(cd <= 0 ? "无限制" : NumberUtil.roundToNthDecimalPlace(20 / cd, 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, getAmmoItem().getDescription()));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(isFullAutomatic() ? "items.description.gun.fully_automatic" : "items.description.gun.semi_automatic", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
     }

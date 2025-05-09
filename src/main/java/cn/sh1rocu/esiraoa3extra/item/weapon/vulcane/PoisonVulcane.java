@@ -1,12 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.vulcane;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.library.builder.EffectBuilder;
@@ -22,13 +22,13 @@ public class PoisonVulcane extends BaseVulcane {
     }
 
     @Override
-    public void doAdditionalEffect(LivingEntity target, PlayerEntity attacker, float damageDealt) {
-        EntityUtil.applyPotions(target, new EffectBuilder(Effects.POISON, 140).level(2));
+    public void doAdditionalEffect(LivingEntity target, Player attacker, float damageDealt) {
+        EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.POISON, 140).level(2));
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
         super.appendHoverText(stack, world, tooltip, flag);
     }

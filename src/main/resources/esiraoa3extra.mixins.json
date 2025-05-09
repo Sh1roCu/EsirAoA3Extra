@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "cn.sh1rocu.esiraoa3extra.mixin",
+  "plugin": "cn.sh1rocu.esiraoa3extra.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "esiraoa3extra.refmap.json",
   "mixins": [

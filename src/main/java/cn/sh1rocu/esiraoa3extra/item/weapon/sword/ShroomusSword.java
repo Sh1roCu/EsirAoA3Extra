@@ -1,11 +1,11 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.sword;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -23,17 +23,17 @@ public class ShroomusSword extends BaseSword {
     @Override
     protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
         if (attackCooldown > 0.75) {
-            Collection<EffectInstance> effects = attacker.getActiveEffects();
+            Collection<MobEffectInstance> effects = attacker.getActiveEffects();
 
             if (!effects.isEmpty()) {
-                ArrayList<EffectInstance> removableEffects = new ArrayList<EffectInstance>(effects.size());
+                ArrayList<MobEffectInstance> removableEffects = new ArrayList<>(effects.size());
 
-                for (EffectInstance effect : effects) {
+                for (MobEffectInstance effect : effects) {
                     if (!effect.getEffect().isBeneficial())
                         removableEffects.add(effect);
                 }
 
-                for (EffectInstance effect : removableEffects) {
+                for (MobEffectInstance effect : removableEffects) {
                     target.addEffect(effect);
                     attacker.removeEffect(effect.getEffect());
                 }
@@ -42,7 +42,7 @@ public class ShroomusSword extends BaseSword {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
     }
 }

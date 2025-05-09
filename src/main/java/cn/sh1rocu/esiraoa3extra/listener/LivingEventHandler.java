@@ -5,16 +5,16 @@ import cn.sh1rocu.esiraoa3extra.item.armour.AdventArmour;
 import cn.sh1rocu.esiraoa3extra.item.weapon.maul.BaseMaul;
 import cn.sh1rocu.esiraoa3extra.registration.EsirAttributes;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class LivingEventHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onArmourChanged(LivingEquipmentChangeEvent event) {
-        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayerEntity)) return;
+        if (event.isCanceled() || !(event.getEntity() instanceof ServerPlayer)) return;
         String uuid = "";
         String modifierName = "";
         switch (event.getSlot()) {
@@ -56,18 +56,18 @@ public class LivingEventHandler {
         if (EsirUtil.isEsirArmourOrWeapon(stack) && attribute[0] != -1) {
             double healthAmplifier = attribute[1] + attribute[2] * 10;
             if (healthAmplifier > 0) {
-                EntityUtil.reapplyAttributeModifier((ServerPlayerEntity) event.getEntity(), Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString(uuid), modifierName, healthAmplifier, AttributeModifier.Operation.ADDITION), true);
+                EntityUtil.reapplyAttributeModifier((ServerPlayer) event.getEntity(), Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString(uuid), modifierName, healthAmplifier, AttributeModifier.Operation.ADDITION), true);
                 return;
             }
         }
-        EntityUtil.removeAttributeModifier((ServerPlayerEntity) event.getEntity(), Attributes.MAX_HEALTH, UUID.fromString(uuid));
+        EntityUtil.removeAttributeModifier((ServerPlayer) event.getEntity(), Attributes.MAX_HEALTH, UUID.fromString(uuid));
     }
 
     @SubscribeEvent
     public static void onMaulDamage(LivingHurtEvent ev) {
         Entity attacker = ev.getSource().getEntity();
         if (DamageUtil.isMeleeDamage(ev.getSource()) && attacker instanceof LivingEntity) {
-            ItemStack weapon = ((LivingEntity) attacker).getItemInHand(Hand.MAIN_HAND);
+            ItemStack weapon = ((LivingEntity) attacker).getItemInHand(InteractionHand.MAIN_HAND);
             if (weapon.getItem() instanceof BaseMaul) {
                 float extraDmg = 0;
                 int amplifierLevel = 0;
@@ -87,14 +87,14 @@ public class LivingEventHandler {
     public static void onMagicDamage(LivingHurtEvent ev) {
         Entity attacker = ev.getSource().getEntity();
         if (ev.getSource().isMagic()) {
-            PlayerEntity player = null;
-            if (attacker instanceof PlayerEntity)
-                player = (PlayerEntity) attacker;
-            else if (attacker instanceof ProjectileEntity && ((ProjectileEntity) attacker).getOwner() instanceof PlayerEntity)
-                player = (PlayerEntity) ((ProjectileEntity) attacker).getOwner();
+            Player player = null;
+            if (attacker instanceof Player)
+                player = (Player) attacker;
+            else if (attacker instanceof Projectile && ((Projectile) attacker).getOwner() instanceof Player)
+                player = (Player) ((Projectile) attacker).getOwner();
             if (player == null)
                 return;
-            ModifiableAttributeInstance magicModifier = player.getAttribute(EsirAttributes.MAGIC_DAMAGE.get());
+            AttributeInstance magicModifier = player.getAttribute(EsirAttributes.MAGIC_DAMAGE.get());
             if (magicModifier != null) {
                 ev.setAmount((float) (ev.getAmount() * magicModifier.getValue()));
             }

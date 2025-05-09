@@ -1,13 +1,13 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -38,13 +38,13 @@ public class KaiyuStaff extends BaseStaff<Object> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, Object args) {
-        EntityUtil.applyPotions(caster, new EffectBuilder(Effects.ABSORPTION, 600).level(2));
+    public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
+        EntityUtil.applyPotions(caster, new EffectBuilder(MobEffects.ABSORPTION, 600).level(2));
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         super.appendHoverText(stack, world, tooltip, flag);
     }

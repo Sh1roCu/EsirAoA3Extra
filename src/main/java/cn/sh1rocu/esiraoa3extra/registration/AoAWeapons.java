@@ -15,7 +15,7 @@ import cn.sh1rocu.esiraoa3extra.item.weapon.staff.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.sword.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.thrown.*;
 import cn.sh1rocu.esiraoa3extra.item.weapon.vulcane.*;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

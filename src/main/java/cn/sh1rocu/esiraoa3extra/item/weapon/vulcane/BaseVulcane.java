@@ -1,16 +1,16 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.vulcane;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -32,8 +32,8 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.BOW;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BOW;
     }
 
     public double getDamage() {
@@ -41,8 +41,8 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
     }
 
     @Override
-    public ActionResult<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, Hand hand) {
-        PlayerEntity pl = rage.getPlayerDataManager().player();
+    public InteractionResultHolder<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, InteractionHand hand) {
+        Player pl = rage.getPlayerDataManager().player();
         float extraDmg = 0;
         int amplifierLevel = 0;
         int starLevel = 0;
@@ -57,17 +57,17 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
 
         if (DamageUtil.dealVulcaneDamage(pl.getLastHurtByMob(), pl, damage)) {
             doAdditionalEffect(pl.getLastHurtByMob(), pl, Math.min(damage, targetHealth));
-            pl.level.playSound(null, pl.getX(), pl.getY(), pl.getZ(), AoASounds.ITEM_VULCANE_USE.get(), SoundCategory.PLAYERS, 1.0f, 1.0f);
+            pl.level.playSound(null, pl.getX(), pl.getY(), pl.getZ(), AoASounds.ITEM_VULCANE_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
             ItemUtil.damageItem(vulcane, pl, hand);
             rage.consume(rage.getCurrentValue(), true);
 
-            return ActionResult.success(vulcane);
+            return InteractionResultHolder.success(vulcane);
         }
 
-        return ActionResult.fail(vulcane);
+        return InteractionResultHolder.fail(vulcane);
     }
 
-    public void doAdditionalEffect(LivingEntity target, PlayerEntity player, float damageDealt) {
+    public void doAdditionalEffect(LivingEntity target, Player player, float damageDealt) {
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.true", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(baseDmg)));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.vulcane.use", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.vulcane.target", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));

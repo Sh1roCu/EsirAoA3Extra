@@ -4,46 +4,46 @@ import cn.sh1rocu.esiraoa3extra.item.misc.AttributeExchangeStone;
 import cn.sh1rocu.esiraoa3extra.registration.AoABlocks;
 import cn.sh1rocu.esiraoa3extra.registration.AoAContainers;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftResultInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 
-public class AmplifierTableContainer extends Container {
-    public final Inventory inputs;
-    public final CraftResultInventory leftNewEquip;
-    public final CraftResultInventory rightNewEquip;
-    private final IWorldPosCallable functionCaller;
-    private final PlayerEntity player;
+public class AmplifierTableContainer extends AbstractContainerMenu {
+    public final SimpleContainer inputs;
+    public final ResultContainer leftNewEquip;
+    public final ResultContainer rightNewEquip;
+    private final ContainerLevelAccess functionCaller;
+    private final Player player;
 
-    public AmplifierTableContainer(int screenId, PlayerInventory plInventory, IWorldPosCallable functionCaller) {
+    public AmplifierTableContainer(int screenId, Inventory plInventory, ContainerLevelAccess functionCaller) {
         super(AoAContainers.AMPLIFIER_TABLE.get(), screenId);
         this.player = plInventory.player;
         this.functionCaller = functionCaller;
-        this.inputs = new Inventory(3) {
+        this.inputs = new SimpleContainer(3) {
             @Override
             public void setChanged() {
                 super.setChanged();
                 AmplifierTableContainer.this.slotsChanged(this);
             }
         };
-        this.leftNewEquip = new CraftResultInventory();
-        this.rightNewEquip = new CraftResultInventory();
+        this.leftNewEquip = new ResultContainer();
+        this.rightNewEquip = new ResultContainer();
         this.addSlot(this.initFirstEquipSlot());
         this.addSlot(this.initSecondEquipSlot());
         this.addSlot(this.initExchangeStoneSlot());
@@ -63,12 +63,12 @@ public class AmplifierTableContainer extends Container {
     }
 
     @Override
-    public void slotsChanged(IInventory inventory) {
+    public void slotsChanged(Container inventory) {
         this.functionCaller.execute((world, pos) -> this.updateOutput());
     }
 
     @Override
-    public void removed(PlayerEntity playerIn) {
+    public void removed(Player playerIn) {
         super.removed(playerIn);
         this.functionCaller.execute((world, pos) -> {
             this.clearContainer(playerIn, world, this.inputs);
@@ -81,7 +81,7 @@ public class AmplifierTableContainer extends Container {
 
     @Nonnull
     @Override
-    public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+    public ItemStack quickMoveStack(Player playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasItem()) {
@@ -147,13 +147,13 @@ public class AmplifierTableContainer extends Container {
             }
 
             @Override
-            public boolean mayPickup(PlayerEntity playerIn) {
+            public boolean mayPickup(Player playerIn) {
                 return this.hasItem();
             }
 
             @Nonnull
             @Override
-            public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
+            public ItemStack onTake(Player thePlayer, ItemStack stack) {
                 AmplifierTableContainer.this.inputs.setItem(0, ItemStack.EMPTY);
                 AmplifierTableContainer.this.inputs.setItem(1, ItemStack.EMPTY);
                 if (!AmplifierTableContainer.this.rightNewEquip.isEmpty())
@@ -171,13 +171,13 @@ public class AmplifierTableContainer extends Container {
             }
 
             @Override
-            public boolean mayPickup(PlayerEntity playerIn) {
+            public boolean mayPickup(Player playerIn) {
                 return this.hasItem();
             }
 
             @Nonnull
             @Override
-            public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack) {
+            public ItemStack onTake(Player thePlayer, ItemStack stack) {
                 AmplifierTableContainer.this.inputs.setItem(0, ItemStack.EMPTY);
                 AmplifierTableContainer.this.inputs.setItem(1, ItemStack.EMPTY);
                 if (!AmplifierTableContainer.this.leftNewEquip.isEmpty())
@@ -220,23 +220,23 @@ public class AmplifierTableContainer extends Container {
         return AoABlocks.AMPLIFIER_TABLE.get();
     }
 
-    public static void openContainer(ServerPlayerEntity player, final BlockPos pos) {
-        NetworkHooks.openGui(player, new INamedContainerProvider() {
+    public static void openContainer(ServerPlayer player, final BlockPos pos) {
+        NetworkHooks.openGui(player, new MenuProvider() {
             @Nonnull
             @Override
-            public ITextComponent getDisplayName() {
-                return new TranslationTextComponent("container.esiraoa3extra.amplifier_table");
+            public Component getDisplayName() {
+                return new TranslatableComponent("container.esiraoa3extra.amplifier_table");
             }
 
             @Override
-            public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
-                return new AmplifierTableContainer(windowId, inv, IWorldPosCallable.create(player.level, pos));
+            public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
+                return new AmplifierTableContainer(windowId, inv, ContainerLevelAccess.create(player.level, pos));
             }
         }, pos);
     }
 
     @Override
-    public boolean stillValid(PlayerEntity playerEntity) {
-        return stillValid(this.functionCaller, playerEntity, this.getBlock());
+    public boolean stillValid(Player Player) {
+        return stillValid(this.functionCaller, Player, this.getBlock());
     }
 }

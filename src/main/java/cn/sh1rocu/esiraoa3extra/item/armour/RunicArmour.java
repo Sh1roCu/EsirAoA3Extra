@@ -1,13 +1,13 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class RunicArmour extends AdventArmour {
-    public RunicArmour(EquipmentSlotType slot) {
+    public RunicArmour(EquipmentSlot slot) {
         super(ItemUtil.customArmourMaterial("aoa3:runic", 67, new int[]{5, 8, 9, 5}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), slot);
     }
 
@@ -30,23 +30,23 @@ public class RunicArmour extends AdventArmour {
     }
 
     @Override
-    public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots, LivingHurtEvent event) {
+    public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
         if (slots != null && DamageUtil.isMagicDamage(event.getSource(), plData.player(), event.getAmount()))
             event.setAmount(event.getAmount() * (1 - (slots.size() * 0.1f)));
         super.onAttackReceived(plData, slots, event);
     }
 
     @Override
-    public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots, LivingDamageEvent event) {
+    public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
         if (slots == null && plData.equipment().isCooledDown("runic_armour") && DamageUtil.isMagicDamage(event.getSource(), plData.player(), event.getAmount())) {
-            plData.player().addEffect(new EffectInstance(Effects.ABSORPTION, 200, 0, false, false));
+            plData.player().addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0, false, false));
             plData.equipment().setCooldown("runic_armour", 6000);
         }
         super.onPostAttackReceived(plData, slots, event);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(pieceEffectHeader());
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.runic_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(setEffectHeader());

@@ -1,12 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.ItemUtil;
@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class EmbrodiumArmour extends AdventArmour {
-    public EmbrodiumArmour(EquipmentSlotType slot) {
+    public EmbrodiumArmour(EquipmentSlot slot) {
         super(ItemUtil.customArmourMaterial("aoa3:embrodium", 45, new int[]{4, 7, 8, 3}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 3), slot);
     }
 
@@ -28,11 +28,11 @@ public class EmbrodiumArmour extends AdventArmour {
     }
 
     @Override
-    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots) {
+    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
         if (slots == null) {
             plData.getResource(AoAResources.SPIRIT.get()).addValue(0.08f);
         } else {
-            PlayerEntity pl = plData.player();
+            Player pl = plData.player();
             float temp = WorldUtil.getAmbientTemperature(pl.level, pl.blockPosition());
 
             if (temp > 0.8f)
@@ -42,7 +42,7 @@ public class EmbrodiumArmour extends AdventArmour {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(pieceEffectHeader());
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.embrodium_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(setEffectHeader());

@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class OceanusHelmet extends AdventArmour {
     public OceanusHelmet() {
-        super(ItemUtil.customArmourMaterial("aoa3:oceanus", 60, new int[]{5, 7, 9, 5}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), EquipmentSlotType.HEAD);
+        super(ItemUtil.customArmourMaterial("aoa3:oceanus", 60, new int[]{5, 7, 9, 5}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), EquipmentSlot.HEAD);
     }
 
     @Override
@@ -28,8 +28,8 @@ public class OceanusHelmet extends AdventArmour {
     }
 
     @Override
-    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots) {
-        plData.player().addEffect(new EffectInstance(Effects.DOLPHINS_GRACE, -1, 1, true, false));
+    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
+        plData.player().addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, -1, 1, true, false));
 
         if (plData.player().isInWater())
             plData.player().setAirSupply(-10);
@@ -37,12 +37,12 @@ public class OceanusHelmet extends AdventArmour {
     }
 
     @Override
-    public boolean isHelmetAirTight(ServerPlayerEntity player) {
+    public boolean isHelmetAirTight(ServerPlayer player) {
         return true;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.helmet.airTight", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(anySetEffectHeader());

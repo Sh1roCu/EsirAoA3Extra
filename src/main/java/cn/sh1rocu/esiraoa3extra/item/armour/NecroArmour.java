@@ -1,18 +1,18 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class NecroArmour extends AdventArmour {
-    public NecroArmour(EquipmentSlotType slot) {
+    public NecroArmour(EquipmentSlot slot) {
         super(ItemUtil.customArmourMaterial("aoa3:necro", 64, new int[]{5, 8, 9, 4}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), slot);
     }
 
@@ -36,9 +36,9 @@ public class NecroArmour extends AdventArmour {
     }
 
     @Override
-    public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots, LivingDamageEvent event) {
+    public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
         if (slots == null && !DamageUtil.isEnvironmentalDamage(event.getSource()) && event.getAmount() > plData.player().getHealth() && plData.equipment().isCooledDown("necro_armour")) {
-            PlayerEntity pl = plData.player();
+            Player pl = plData.player();
 
             event.setAmount(0);
             plData.equipment().setCooldown("necro_armour", 72000);
@@ -47,17 +47,17 @@ public class NecroArmour extends AdventArmour {
             if (pl.getHealth() < 4)
                 pl.setHealth(4);
 
-            ((ServerWorld) pl.level).sendParticles(ParticleTypes.HEART, pl.getX(), pl.getBoundingBox().maxY, pl.getZ(), 5, 0, 0, 0, 0);
+            ((ServerLevel) pl.level).sendParticles(ParticleTypes.HEART, pl.getX(), pl.getBoundingBox().maxY, pl.getZ(), 5, 0, 0, 0, 0);
         }
         super.onPostAttackReceived(plData, slots, event);
     }
 
     @Override
-    public void onPlayerDeath(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots, LivingDeathEvent event) {
+    public void onPlayerDeath(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDeathEvent event) {
         if (slots != null) {
             int count = slots.size();
             int inventoryIndex = 0;
-            PlayerInventory inv = plData.player().inventory;
+            Inventory inv = plData.player().inventory;
 
             while (count > 0 && inventoryIndex < inv.getContainerSize()) {
                 ItemStack stack = inv.getItem(inventoryIndex);
@@ -75,7 +75,7 @@ public class NecroArmour extends AdventArmour {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.necro_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.necro_armour.desc.2", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(pieceEffectHeader());

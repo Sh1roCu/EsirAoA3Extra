@@ -1,12 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.greatblade;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RandomUtil;
@@ -22,11 +22,11 @@ public class SubterraneanGreatblade extends BaseGreatblade {
     @Override
     protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
         if (RandomUtil.percentChance(attackCooldown * 0.2f))
-            target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 30, 50, true, false));
+            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 50, true, false));
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
     }
 }

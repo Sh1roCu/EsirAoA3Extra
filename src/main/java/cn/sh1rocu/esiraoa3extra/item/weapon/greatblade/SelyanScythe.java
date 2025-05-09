@@ -1,11 +1,11 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.greatblade;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -21,7 +21,7 @@ public class SelyanScythe extends BaseGreatblade {
 
     @Override
     protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
-        AoAResource.Instance spirit = target instanceof ServerPlayerEntity ? PlayerUtil.getResource((ServerPlayerEntity) target, AoAResources.SPIRIT.get()) : null;
+        AoAResource.Instance spirit = target instanceof ServerPlayer ? PlayerUtil.getResource((ServerPlayer) target, AoAResources.SPIRIT.get()) : null;
         float consumeAmount = (spirit != null ? Math.min(50, spirit.getCurrentValue()) : 50) * attackCooldown;
 
         attacker.heal(attackCooldown);
@@ -30,13 +30,13 @@ public class SelyanScythe extends BaseGreatblade {
             if (spirit != null && !spirit.consume(consumeAmount, true))
                 return;
 
-            if (attacker instanceof ServerPlayerEntity)
-                PlayerUtil.addResourceToPlayer((ServerPlayerEntity) attacker, AoAResources.SPIRIT.get(), consumeAmount);
+            if (attacker instanceof ServerPlayer)
+                PlayerUtil.addResourceToPlayer((ServerPlayer) attacker, AoAResources.SPIRIT.get(), consumeAmount);
         }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.scythe", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
     }

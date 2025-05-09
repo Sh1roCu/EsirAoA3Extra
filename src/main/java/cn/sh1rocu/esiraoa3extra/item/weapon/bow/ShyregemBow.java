@@ -1,7 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.bow;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoAItems;
 
 public class ShyregemBow extends BaseBow {

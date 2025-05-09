@@ -2,35 +2,31 @@ package cn.sh1rocu.esiraoa3extra.item.weapon.crossbow;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import com.google.common.collect.Lists;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ICrossbowUser;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.UseAction;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.CrossbowAttackMob;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 
@@ -52,8 +48,8 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.CROSSBOW;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.CROSSBOW;
     }
 
     protected ItemStack findAmmo(ItemStack crossbowStack, LivingEntity player, boolean infiniteAmmo) {
@@ -62,7 +58,7 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
 
     protected boolean hasAmmo(LivingEntity user, ItemStack crossbowStack) {
         int multishot = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MULTISHOT, crossbowStack);
-        boolean infiniteAmmo = user instanceof PlayerEntity && ((PlayerEntity) user).isCreative();
+        boolean infiniteAmmo = user instanceof Player && ((Player) user).isCreative();
         ItemStack ammoStack = findAmmo(crossbowStack, user, infiniteAmmo);
         ItemStack ammoStackCopy = ammoStack.copy();
 
@@ -92,8 +88,8 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
         if (!canUseAmmo && !infiniteAmmo && !isMultishotProjectile) {
             itemstack = ammoStack.split(1);
 
-            if (ammoStack.isEmpty() && shooter instanceof PlayerEntity)
-                ((PlayerEntity) shooter).inventory.removeItem(ammoStack);
+            if (ammoStack.isEmpty() && shooter instanceof Player)
+                ((Player) shooter).inventory.removeItem(ammoStack);
         } else {
             itemstack = ammoStack.copy();
         }
@@ -104,30 +100,30 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     }
 
     protected void addChargedProjectile(ItemStack crossbow, ItemStack projectile) {
-        CompoundNBT tag = crossbow.getOrCreateTag();
-        ListNBT projectilesNbt;
+        CompoundTag tag = crossbow.getOrCreateTag();
+        ListTag projectilesNbt;
 
         if (tag.contains("ChargedProjectiles", Constants.NBT.TAG_LIST)) {
             projectilesNbt = tag.getList("ChargedProjectiles", Constants.NBT.TAG_COMPOUND);
         } else {
-            projectilesNbt = new ListNBT();
+            projectilesNbt = new ListTag();
         }
 
-        CompoundNBT projectileTag = new CompoundNBT();
+        CompoundTag projectileTag = new CompoundTag();
 
         projectile.save(projectileTag);
         projectilesNbt.add(projectileTag);
         tag.put("ChargedProjectiles", projectilesNbt);
     }
 
-    protected void fireProjectiles(LivingEntity shooter, Hand hand, ItemStack crossbowStack, float baseVelocity, float baseInaccuracy) {
+    protected void fireProjectiles(LivingEntity shooter, InteractionHand hand, ItemStack crossbowStack, float baseVelocity, float baseInaccuracy) {
         List<ItemStack> projectiles = getChargedProjectiles(crossbowStack);
 
         if (projectiles.isEmpty())
             return;
 
         float[] soundPitches = getRandomSoundPitches(shooter.getRandom(), projectiles.size());
-        boolean creativeMode = shooter instanceof PlayerEntity && ((PlayerEntity) shooter).isCreative();
+        boolean creativeMode = shooter instanceof Player && ((Player) shooter).isCreative();
         float spreadModifier = -10f;
 
         fireProjectile(shooter, hand, crossbowStack, projectiles.get(0), soundPitches[0], creativeMode, baseVelocity, baseInaccuracy, 0);
@@ -140,8 +136,8 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
             spreadModifier = spreadModifier < 0 ? spreadModifier * -1 : spreadModifier / -2f;
         }
 
-        if (shooter instanceof ServerPlayerEntity) {
-            ServerPlayerEntity player = (ServerPlayerEntity) shooter;
+        if (shooter instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) shooter;
 
             CriteriaTriggers.SHOT_CROSSBOW.trigger(player, crossbowStack);
             player.awardStat(Stats.ITEM_USED.get(crossbowStack.getItem()));
@@ -150,12 +146,12 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
         clearProjectiles(crossbowStack);
     }
 
-    protected void fireProjectile(LivingEntity shooter, Hand hand, ItemStack crossbowStack, ItemStack projectileStack, float soundPitch, boolean isCreative, float velocity, float inaccuracy, float projectileAngle) {
-        World world = shooter.getCommandSenderWorld();
+    protected void fireProjectile(LivingEntity shooter, InteractionHand hand, ItemStack crossbowStack, ItemStack projectileStack, float soundPitch, boolean isCreative, float velocity, float inaccuracy, float projectileAngle) {
+        Level world = shooter.getCommandSenderWorld();
 
         if (!world.isClientSide) {
             boolean isFirework = projectileStack.getItem() == Items.FIREWORK_ROCKET;
-            ProjectileEntity projectile;
+            Projectile projectile;
 
             if (isFirework) {
                 projectile = new FireworkRocketEntity(world, projectileStack, shooter, shooter.getX(), shooter.getEyeY() - 0.15F, shooter.getZ(), true);
@@ -163,15 +159,15 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
                 projectile = createArrow(shooter, crossbowStack, projectileStack);
 
                 if (isCreative || projectileAngle != 0.0F)
-                    ((AbstractArrowEntity) projectile).pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+                    ((AbstractArrow) projectile).pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             }
 
-            if (shooter instanceof ICrossbowUser) {
-                ICrossbowUser crossbowUser = (ICrossbowUser) shooter;
+            if (shooter instanceof CrossbowAttackMob) {
+                CrossbowAttackMob crossbowUser = (CrossbowAttackMob) shooter;
 
                 crossbowUser.shootCrossbowProjectile(crossbowUser.getTarget(), crossbowStack, projectile, projectileAngle);
             } else {
-                Vector3d vecUp = shooter.getUpVector(1.0F);
+                Vec3 vecUp = shooter.getUpVector(1.0F);
                 Quaternion angle = new Quaternion(new Vector3f(vecUp), projectileAngle, true);
                 Vector3f lookVec = new Vector3f(shooter.getViewVector(1.0F));
 
@@ -185,7 +181,7 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
             float extraDmg = 0;
             float amplifierLevel = 0;
             float starLevel = 0;
-            if (hand.equals(Hand.MAIN_HAND)) {
+            if (hand.equals(InteractionHand.MAIN_HAND)) {
                 float[] attribute = EsirUtil.getAttribute(crossbowStack);
                 if (attribute[0] != -1) {
                     extraDmg = attribute[0];
@@ -195,11 +191,11 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
             }
             float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
 
-            CompoundNBT nbt = projectile.getPersistentData();
+            CompoundTag nbt = projectile.getPersistentData();
             nbt.putFloat("extraDmgMod", extraDmgMod);
             world.addFreshEntity(projectile);
             crossbowStack.hurtAndBreak(isFirework ? 3 : 1, shooter, (user) -> user.broadcastBreakEvent(hand));
-            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundCategory.PLAYERS, 1.0F, soundPitch);
+            world.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, soundPitch);
         }
     }
 
@@ -207,7 +203,7 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
         ArrowItem arrowItem = (ArrowItem) (ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
         CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level, ammoStack, shooter), this, shooter, getDamage());
 
-        if (shooter instanceof PlayerEntity)
+        if (shooter instanceof Player)
             arrow.setCritArrow(true);
 
         arrow.setSoundEvent(SoundEvents.CROSSBOW_HIT);
@@ -230,10 +226,10 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
 
     protected List<ItemStack> getChargedProjectiles(ItemStack crossbowStack) {
         List<ItemStack> projectiles = Lists.newArrayList();
-        CompoundNBT tag = crossbowStack.getTag();
+        CompoundTag tag = crossbowStack.getTag();
 
         if (tag != null && tag.contains("ChargedProjectiles", Constants.NBT.TAG_LIST)) {
-            ListNBT projectileNbt = tag.getList("ChargedProjectiles", Constants.NBT.TAG_COMPOUND);
+            ListTag projectileNbt = tag.getList("ChargedProjectiles", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < projectileNbt.size(); ++i) {
                 projectiles.add(ItemStack.of(projectileNbt.getCompound(i)));
@@ -244,10 +240,10 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     }
 
     protected void clearProjectiles(ItemStack crossbowStack) {
-        CompoundNBT tag = crossbowStack.getTag();
+        CompoundTag tag = crossbowStack.getTag();
 
         if (tag != null) {
-            ListNBT projectilesNbt = tag.getList("ChargedProjectiles", Constants.NBT.TAG_LIST);
+            ListTag projectilesNbt = tag.getList("ChargedProjectiles", Constants.NBT.TAG_LIST);
 
             projectilesNbt.clear();
             tag.put("ChargedProjectiles", projectilesNbt);
@@ -288,7 +284,7 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     public void onEntityHit(CustomArrowEntity arrow, Entity target, Entity shooter, double damage, float drawStrength) {
     }
 
-    public void onBlockHit(CustomArrowEntity arrow, BlockRayTraceResult rayTrace, Entity shooter) {
+    public void onBlockHit(CustomArrowEntity arrow, BlockHitResult rayTrace, Entity shooter) {
     }
 
     public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {
@@ -304,7 +300,7 @@ public class BaseCrossbow extends net.tslat.aoa3.content.item.weapon.crossbow.Ba
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
     }
 }

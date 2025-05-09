@@ -1,13 +1,13 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.ItemUtil;
@@ -24,7 +24,7 @@ public class SpeedArmour extends AdventArmour {
     private static final AttributeModifier CHESTPLATE_BONUS = new AttributeModifier(UUID.fromString("0f20e0f4-a909-409d-99cf-65fd80f516c7"), "AoASpeedArmourBody", 0.1d, AttributeModifier.Operation.MULTIPLY_TOTAL);
     private static final AttributeModifier HELMET_BONUS = new AttributeModifier(UUID.fromString("6d13cd91-39d8-4e68-8c25-b9b45bb729d9"), "AoASpeedArmourHelmet", 0.1d, AttributeModifier.Operation.MULTIPLY_TOTAL);
 
-    public SpeedArmour(EquipmentSlotType slot) {
+    public SpeedArmour(EquipmentSlot slot) {
         super(ItemUtil.customArmourMaterial("aoa3:speed", 63, new int[]{4, 9, 9, 3}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), slot);
     }
 
@@ -34,7 +34,7 @@ public class SpeedArmour extends AdventArmour {
     }
 
     @Override
-    public void onEquip(ServerPlayerDataManager plData, @Nullable EquipmentSlotType slot) {
+    public void onEquip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
         if (slot == null) {
             EntityUtil.applyAttributeModifierSafely(plData.player(), Attributes.MOVEMENT_SPEED, SET_BONUS, false);
         } else {
@@ -59,7 +59,7 @@ public class SpeedArmour extends AdventArmour {
     }
 
     @Override
-    public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlotType slot) {
+    public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
         if (slot == null) {
             EntityUtil.removeAttributeModifier(plData.player(), Attributes.MOVEMENT_SPEED, SET_BONUS);
         } else {
@@ -84,7 +84,7 @@ public class SpeedArmour extends AdventArmour {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(pieceEffectHeader());
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.speed_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
         tooltip.add(setEffectHeader());

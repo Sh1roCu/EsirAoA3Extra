@@ -1,20 +1,20 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
@@ -34,7 +34,7 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         super(durability);
     }
 
-    public boolean findAndConsumeRunes(HashMap<Item, Integer> runes, ServerPlayerEntity player, boolean allowBuffs, ItemStack staff) {
+    public boolean findAndConsumeRunes(HashMap<Item, Integer> runes, ServerPlayer player, boolean allowBuffs, ItemStack staff) {
         return ItemUtil.findAndConsumeRunes(runes, player, allowBuffs, staff);
     }
 
@@ -57,10 +57,10 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
 
     protected abstract void populateRunes(HashMap<Item, Integer> runes);
 
-    public abstract void cast(World world, ItemStack staff, LivingEntity caster, T args);
+    public abstract void cast(Level world, ItemStack staff, LivingEntity caster, T args);
 
     @Override
-    public void doBlockImpact(BaseEnergyShot shot, Vector3d hitPos, LivingEntity shooter) {
+    public void doBlockImpact(BaseEnergyShot shot, Vec3 hitPos, LivingEntity shooter) {
     }
 
     @Override
@@ -69,8 +69,8 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
     }
 
     @Override
-    public Hand getWeaponHand(LivingEntity holder) {
-        return holder.getMainHandItem().getItem() == this || holder.getOffhandItem().getItem() != this ? Hand.MAIN_HAND : Hand.OFF_HAND;
+    public InteractionHand getWeaponHand(LivingEntity holder) {
+        return holder.getMainHandItem().getItem() == this || holder.getOffhandItem().getItem() != this ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
     }
 
     @Override
@@ -82,12 +82,12 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         return 0;
     }
 
-    public void createEnergyShot(World world, ItemStack staff, LivingEntity caster, BaseEnergyShot... shots) {
+    public void createEnergyShot(Level world, ItemStack staff, LivingEntity caster, BaseEnergyShot... shots) {
         float extraDmg = 0;
         float amplifierLevel = 0;
         float starLevel = 0;
         int archMageLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), staff);
-        if (getWeaponHand(caster).equals(Hand.MAIN_HAND)) {
+        if (getWeaponHand(caster).equals(InteractionHand.MAIN_HAND)) {
             float[] attribute = EsirUtil.getAttribute(staff);
             if (attribute[0] != -1) {
                 extraDmg = attribute[0];
@@ -97,7 +97,7 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
         }
         float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
 
-        CompoundNBT nbt;
+        CompoundTag nbt;
         for (BaseEnergyShot shot : shots) {
             nbt = shot.getPersistentData();
             nbt.putFloat("extraDmgMod", extraDmgMod);
@@ -113,14 +113,14 @@ public abstract class BaseStaff<T> extends net.tslat.aoa3.content.item.weapon.st
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         if (getDmg() > 0)
             tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.magic", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getDmg() * (1 + 0.1f * EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.ARCHMAGE.get(), stack)))));
 
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.staff.runesRequired", LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
 
         for (Map.Entry<Item, Integer> runeEntry : getRunes().entrySet()) {
-            tooltip.add(LocaleUtil.getLocaleMessage("items.description.staff.runesRequired.specific", TextFormatting.WHITE, LocaleUtil.numToComponent(runeEntry.getValue()), LocaleUtil.getLocaleMessage(runeEntry.getKey().getDescriptionId())));
+            tooltip.add(LocaleUtil.getLocaleMessage("items.description.staff.runesRequired.specific", ChatFormatting.WHITE, LocaleUtil.numToComponent(runeEntry.getValue()), LocaleUtil.getLocaleMessage(runeEntry.getKey().getDescriptionId())));
         }
     }
 }

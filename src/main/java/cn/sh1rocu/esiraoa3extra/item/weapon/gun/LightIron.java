@@ -1,10 +1,10 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.gun;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoAItemGroups;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -35,7 +35,7 @@ public class LightIron extends BaseGun {
     }
 
     @Override
-    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, Hand hand) {
+    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
         return new LightIronShotEntity(shooter, this, hand, 120, 0);
     }
 }

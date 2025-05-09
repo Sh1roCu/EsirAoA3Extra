@@ -1,18 +1,18 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.blaster;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -48,8 +48,8 @@ public class SoulSpark extends BaseBlaster {
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
         if (!EntityUtil.isImmuneToSpecialAttacks(target, shooter)) {
-            if (shooter instanceof ServerPlayerEntity && !((ServerPlayerEntity) shooter).isCreative()) {
-                ServerPlayerEntity player = (ServerPlayerEntity) shooter;
+            if (shooter instanceof ServerPlayer && !((ServerPlayer) shooter).isCreative()) {
+                ServerPlayer player = (ServerPlayer) shooter;
                 AoAResource.Instance spirit = PlayerUtil.getResource(player, AoAResources.SPIRIT.get());
 
                 if (!spirit.hasAmount(200)) {
@@ -60,11 +60,11 @@ public class SoulSpark extends BaseBlaster {
 
                 spirit.consume(200, false);
 
-                Hand hand = player.getUsedItemHand();
+                InteractionHand hand = player.getUsedItemHand();
                 ItemStack stack = player.getItemInHand(hand);
 
                 if (stack.getItem() != this)
-                    stack = player.getItemInHand(hand == Hand.MAIN_HAND ? Hand.OFF_HAND : Hand.MAIN_HAND);
+                    stack = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
                 if (stack.getItem() != this)
                     return false;
@@ -85,26 +85,26 @@ public class SoulSpark extends BaseBlaster {
         if (!player.level.isClientSide) {
             if (count + firingDelay <= 72000 && count % firingDelay == 0) {
                 if (getFiringSound() != null)
-                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(), getFiringSound(), SoundCategory.PLAYERS, 1.0f, 1.0f);
+                    player.level.playSound(null, player.getX(), player.getY(), player.getZ(), getFiringSound(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
                 fire(stack, player);
-                ((PlayerEntity) player).awardStat(Stats.ITEM_USED.get(this));
+                ((Player) player).awardStat(Stats.ITEM_USED.get(this));
             }
         }
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, World world, LivingEntity player, int useTicksRemaining) {
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity player, int useTicksRemaining) {
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.SPEC_IMMUNE, LocaleUtil.ItemDescriptionType.HARMFUL));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, new StringTextComponent("200"), AoAResources.SPIRIT.get().getName()));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, new TextComponent("200"), AoAResources.SPIRIT.get().getName()));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.fire", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.blaster.effect", LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(Double.toString((2000 / firingDelay) / 100d))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, new TextComponent(Double.toString((2000 / firingDelay) / 100d))));
     }
 }

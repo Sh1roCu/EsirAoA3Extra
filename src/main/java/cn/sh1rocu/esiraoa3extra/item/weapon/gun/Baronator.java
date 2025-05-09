@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.gun;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItemGroups;
@@ -34,11 +34,11 @@ public class Baronator extends BaseGun {
 
     @Override
 
-    protected boolean fireGun(LivingEntity shooter, ItemStack stack, Hand hand) {
+    protected boolean fireGun(LivingEntity shooter, ItemStack stack, InteractionHand hand) {
         if (super.fireGun(shooter, stack, hand)) {
             if (!shooter.level.isClientSide && RandomUtil.oneInNChance(5)) {
                 shooter.level.addFreshEntity(new GrenadeEntity(shooter, this, hand, 120, 0));
-                shooter.level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), AoASounds.ITEM_GUN_AIR_CANNON_FIRE.get(), SoundCategory.PLAYERS, 1.0f, getFiringSoundPitchAdjust() + (float) random.nextGaussian() * 0.075f);
+                shooter.level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), AoASounds.ITEM_GUN_AIR_CANNON_FIRE.get(), SoundSource.PLAYERS, 1.0f, getFiringSoundPitchAdjust() + (float) random.nextGaussian() * 0.075f);
             }
 
             return true;
@@ -55,7 +55,7 @@ public class Baronator extends BaseGun {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         super.appendHoverText(stack, world, tooltip, flag);
     }

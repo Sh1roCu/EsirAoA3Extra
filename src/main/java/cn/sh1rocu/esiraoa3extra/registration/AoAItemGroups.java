@@ -1,24 +1,24 @@
 package cn.sh1rocu.esiraoa3extra.registration;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class AoAItemGroups {
-    public static final ArrayList<AoAItemGroup> REGISTERED_ITEM_GROUPS = new ArrayList();
-    public static final ItemGroup ESIRAOA3ITEMS = new AoAItemGroup("Esir-AoA All Items", "all", () -> new ItemStack(AoABlocks.AMPLIFIER_TABLE.get()));
+    public static final ArrayList<AoACreativeModeTab> REGISTERED_ITEM_GROUPS = new ArrayList();
+    public static final CreativeModeTab ESIRAOA3ITEMS = new AoACreativeModeTab("Esir-AoA All Items", "all", () -> new ItemStack(AoABlocks.AMPLIFIER_TABLE.get()));
 
     public AoAItemGroups() {
     }
 
-    public static class AoAItemGroup extends ItemGroup {
+    public static class AoACreativeModeTab extends CreativeModeTab {
         private final String localeName;
         private final Supplier<ItemStack> displayStack;
 
-        public AoAItemGroup(String name, String id, Supplier<ItemStack> iconStack) {
+        public AoACreativeModeTab(String name, String id, Supplier<ItemStack> iconStack) {
             super("esiraoa3extra." + id);
             this.localeName = name;
             this.displayStack = iconStack;

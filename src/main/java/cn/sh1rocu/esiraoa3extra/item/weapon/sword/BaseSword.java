@@ -4,18 +4,18 @@ import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Lazy;
@@ -31,11 +31,11 @@ public class BaseSword extends net.tslat.aoa3.content.item.weapon.sword.BaseSwor
     protected final float dmg;
     protected final double speed;
 
-    public BaseSword(IItemTier itemStats) {
+    public BaseSword(Tier itemStats) {
         this(itemStats, new Item.Properties().durability(itemStats.getUses()).tab(AoAItemGroups.SWORDS).addToolType(ToolType.get("sword"), itemStats.getLevel()));
     }
 
-    public BaseSword(IItemTier itemStats, Item.Properties properties) {
+    public BaseSword(Tier itemStats, Item.Properties properties) {
         super(itemStats, properties);
         this.dmg = itemStats.getAttackDamageBonus();
         this.speed = itemStats.getSpeed();
@@ -73,7 +73,7 @@ public class BaseSword extends net.tslat.aoa3.content.item.weapon.sword.BaseSwor
     }
 
     @Override
-    public boolean onLeftClickEntity(ItemStack stack, PlayerEntity player, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         VolatileStackCapabilityProvider.getOrDefault(stack, Direction.NORTH).setValue(player.getAttackStrengthScale(0.0f));
 
         return false;
@@ -83,7 +83,7 @@ public class BaseSword extends net.tslat.aoa3.content.item.weapon.sword.BaseSwor
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         doMeleeEffect(stack, target, attacker, VolatileStackCapabilityProvider.getOrDefault(stack, Direction.NORTH).getValue());
         stack.hurtAndBreak(1, target, (user) -> {
-            user.broadcastBreakEvent(EquipmentSlotType.MAINHAND);
+            user.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });
         return true;
     }
@@ -93,13 +93,13 @@ public class BaseSword extends net.tslat.aoa3.content.item.weapon.sword.BaseSwor
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new VolatileStackCapabilityProvider();
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack) {
-        if (slot == EquipmentSlotType.MAINHAND) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot == EquipmentSlot.MAINHAND) {
             Multimap<Attribute, AttributeModifier> newMap = HashMultimap.create();
             ImmutableSetMultimap<Attribute, AttributeModifier> attributes = attributeModifiers.get();
 

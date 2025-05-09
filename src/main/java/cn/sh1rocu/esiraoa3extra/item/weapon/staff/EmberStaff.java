@@ -1,15 +1,15 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -40,10 +40,10 @@ public class EmberStaff extends BaseStaff<Object> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, Object args) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
         caster.clearFire();
 
-        for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5), entity -> entity instanceof PlayerEntity || entity instanceof TameableEntity)) {
+        for (LivingEntity entity : world.getEntitiesOfClass(LivingEntity.class, caster.getBoundingBox().inflate(5), entity -> entity instanceof Player || entity instanceof TamableAnimal)) {
             entity.clearFire();
         }
 
@@ -52,7 +52,7 @@ public class EmberStaff extends BaseStaff<Object> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         super.appendHoverText(stack, world, tooltip, flag);
     }

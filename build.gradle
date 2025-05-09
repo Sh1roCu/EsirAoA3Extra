@@ -1,3 +1,113 @@
+plugins {
+    id "dev.architectury.loom" version "1.6+"
+    id "maven-publish"
+    id "com.github.johnrengelman.shadow" version "8.1.0"
+}
+
+base.archivesName = project.mod_id
+version = "${project.mod_version}"
+group = project.mod_group_id
+
+loom {
+    forge {
+        mixinConfigs = [
+                "${mod_id}.mixins.json"
+        ]
+        accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
+    }
+    mixin {
+        defaultRefmapName = "${mod_id}.refmap.json"
+    }
+}
+
+repositories {
+    maven {
+        url "https://cursemaven.com"
+    }
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+}
+
+configurations {
+    implementation.extendsFrom shadow
+}
+
+shadowJar {
+    archiveClassifier.set("shadow")
+    configurations = [project.configurations.shadow]
+    relocate("com.llamalad7.mixinextras", "cn.sh1rocu.esiraoa3extra.mixinextras")
+    mergeServiceFiles()
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    //mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
+    }
+    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    modImplementation "curse.maven:aoa3-311054:4431558"
+    modImplementation "curse.maven:placebo-283644:4501015"
+    modImplementation "curse.maven:apotheosis-313970:3936649"
+    modImplementation "curse.maven:enhanced-celestials-438447:3532022"
+    shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+    forgeRuntimeLibrary("io.github.llamalad7:mixinextras-common:0.4.1")
+}
+
+processResources {
+    var replaceProperties = [minecraft_version   : minecraft_version, minecraft_version_range: minecraft_version_range,
+                             forge_version       : forge_version, forge_version_range: forge_version_range,
+                             loader_version_range: loader_version_range,
+                             mod_id              : mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+                             mod_authors         : mod_authors, mod_description: mod_description,]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+
+    def targetVersion = 9
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.release = targetVersion
+    }
+    //options.compilerArgs += ['-Xlint:none']
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : mod_id,
+                "Specification-Vendor"    : mod_authors,
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : version,
+                "Implementation-Vendor"   : mod_authors,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+/*
 buildscript {
     repositories {
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
@@ -7,7 +117,6 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.0.+', changing: true
     }
-
 }
 
 plugins {
@@ -19,6 +128,7 @@ plugins {
 }
 
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 group = mod_group_id
 version = mod_version
@@ -77,12 +187,24 @@ repositories {
     }
 }
 
+configurations {
+    implementation.extendsFrom shadow
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     implementation fg.deobf("curse.maven:aoa3-311054:4431558")
     implementation fg.deobf("curse.maven:apotheosis-313970:3936649")
     implementation fg.deobf("curse.maven:enhanced-celestials-438447:3532022")
+    shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shadow]
+    relocate("com.llamalad7.mixinextras", "cn.sh1rocu.esiraoa3extra.mixinextras")
+    mergeServiceFiles()
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -97,7 +219,6 @@ tasks.named('processResources', ProcessResources).configure {
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
         expand replaceProperties + [project: project]
     }
-
 }
 tasks.named('jar', Jar).configure {
     manifest {
@@ -109,11 +230,10 @@ tasks.named('jar', Jar).configure {
                     "Implementation-Vendor"   : mod_authors,
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     }
-
     finalizedBy 'reobfJar'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.compilerArgs += ['-Xlint:none']
-}
+}*/

@@ -1,16 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.block.IGrowable;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.BoneMealItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -37,10 +33,10 @@ public class NatureStaff extends BaseStaff<ArrayList<BlockPos>> {
     @Override
     public ArrayList<BlockPos> checkPreconditions(LivingEntity caster, ItemStack staff) {
         ArrayList<BlockPos> blocks = WorldUtil.getBlocksWithinAABB(caster.level, caster.getBoundingBox().inflate(10), (state, pos) -> {
-            if (!(state.getBlock() instanceof IGrowable))
+            if (!(state.getBlock() instanceof BonemealableBlock))
                 return false;
 
-            if (!((IGrowable) state.getBlock()).isValidBonemealTarget(caster.level, pos.immutable(), state, false))
+            if (!((BonemealableBlock) state.getBlock()).isValidBonemealTarget(caster.level, pos.immutable(), state, false))
                 return false;
 
             return WorldUtil.canModifyBlock(caster.level, pos, caster, staff);
@@ -56,7 +52,7 @@ public class NatureStaff extends BaseStaff<ArrayList<BlockPos>> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, ArrayList<BlockPos> args) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, ArrayList<BlockPos> args) {
         for (BlockPos pos : args) {
             BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), caster.level, pos);
         }
@@ -64,7 +60,7 @@ public class NatureStaff extends BaseStaff<ArrayList<BlockPos>> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         super.appendHoverText(stack, world, tooltip, flag);
     }

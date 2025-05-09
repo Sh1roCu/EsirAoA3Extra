@@ -1,7 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.mixin;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.content.enchantment.ShellEnchantment;
 import net.tslat.aoa3.content.item.weapon.cannon.BaseCannon;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;

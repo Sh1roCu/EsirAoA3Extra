@@ -2,19 +2,20 @@ package cn.sh1rocu.esiraoa3extra.client.gui.container;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.container.AmplifierTableContainer;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import net.tslat.aoa3.util.RenderUtil;
 
-public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContainer> {
+
+public class AmplifierTableScreen extends AbstractContainerScreen<AmplifierTableContainer> {
     private static final ResourceLocation textures = new ResourceLocation(EsirAoA3Extra.MODID, "textures/gui/containers/amplifier_table.png");
 
-    public AmplifierTableScreen(AmplifierTableContainer container, PlayerInventory inv, ITextComponent guiTitle) {
+    public AmplifierTableScreen(AmplifierTableContainer container, Inventory inv, Component guiTitle) {
         super(container, inv, guiTitle);
         this.imageWidth = 196;
         this.imageHeight = 200;
@@ -22,7 +23,7 @@ public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContaine
     }
 
     @Override
-    public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrix);
         RenderSystem.blendColor(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getInstance().getTextureManager().bind(textures);
@@ -32,7 +33,7 @@ public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContaine
     }
 
     @Override
-    protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY) {
 /*        AmplifierTableContainer container = this.getMenu();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getInstance().getTextureManager().bind(textures);
@@ -43,7 +44,7 @@ public class AmplifierTableScreen extends ContainerScreen<AmplifierTableContaine
     }
 
     @Override
-    protected void renderLabels(MatrixStack matrix, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack matrix, int mouseX, int mouseY) {
         RenderUtil.drawCenteredScaledMessage(matrix, Minecraft.getInstance().font, this.getTitle(), 90, 21, 1.0F, 4210752, RenderUtil.StringRenderType.NORMAL);
     }
 }

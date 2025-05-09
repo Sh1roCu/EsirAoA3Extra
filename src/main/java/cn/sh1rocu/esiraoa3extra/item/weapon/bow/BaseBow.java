@@ -1,25 +1,25 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.bow;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.AbstractArrowEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ArrowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -45,9 +45,9 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, World world, LivingEntity shooter, int timeLeft) {
-        if (shooter instanceof PlayerEntity) {
-            PlayerEntity pl = (PlayerEntity) shooter;
+    public void releaseUsing(ItemStack stack, Level world, LivingEntity shooter, int timeLeft) {
+        if (shooter instanceof Player) {
+            Player pl = (Player) shooter;
             boolean infiniteAmmo = pl.isCreative() || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, stack) > 0;
             ItemStack ammoStack = this.findAmmo(pl, stack, infiniteAmmo);
             float result = 1;
@@ -71,7 +71,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
                             float extraDmg = 0;
                             float amplifierLevel = 0;
                             float starLevel = 0;
-                            if (shooter.getUsedItemHand().equals(Hand.MAIN_HAND)) {
+                            if (shooter.getUsedItemHand().equals(InteractionHand.MAIN_HAND)) {
                                 float[] attribute = EsirUtil.getAttribute(stack);
                                 if (attribute[0] != -1) {
                                     extraDmg = attribute[0];
@@ -81,12 +81,12 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
                             }
                             float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
 
-                            CompoundNBT nbt = arrow.getPersistentData();
+                            CompoundTag nbt = arrow.getPersistentData();
                             nbt.putFloat("extraDmgMod", extraDmgMod);
                             world.addFreshEntity(arrow);
                         }
 
-                        world.playSound(null, pl.getX(), pl.getY(), pl.getZ(), SoundEvents.ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + velocity * 0.5F);
+                        world.playSound(null, pl.getX(), pl.getY(), pl.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 1.2F) + velocity * 0.5F);
                         if (!infiniteAmmo && !pl.abilities.instabuild) {
                             ammoStack.shrink(1);
                             if (ammoStack.isEmpty()) {
@@ -102,7 +102,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
         }
     }
 
-    protected ItemStack findAmmo(PlayerEntity shooter, ItemStack bowStack, boolean infiniteAmmo) {
+    protected ItemStack findAmmo(Player shooter, ItemStack bowStack, boolean infiniteAmmo) {
         return shooter.getProjectile(bowStack);
     }
 
@@ -129,8 +129,8 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
 
         bowStack.hurtAndBreak(1, shooter, (firingEntity) -> firingEntity.broadcastBreakEvent(shooter.getUsedItemHand()));
 
-        if (!consumeAmmo || (shooter instanceof PlayerEntity && ((PlayerEntity) shooter).isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
-            arrow.pickup = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
+        if (!consumeAmmo || (shooter instanceof Player && ((Player) shooter).isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
+            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
         return arrow;
     }
 
@@ -145,7 +145,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
     public void onEntityHit(CustomArrowEntity arrow, Entity target, Entity shooter, double damage, float drawStrength) {
     }
 
-    public void onBlockHit(CustomArrowEntity arrow, BlockRayTraceResult rayTrace, Entity shooter) {
+    public void onBlockHit(CustomArrowEntity arrow, BlockHitResult rayTrace, Entity shooter) {
     }
 
     public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {
@@ -166,14 +166,14 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(Double.toString(getDamage()))));
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new TextComponent(Double.toString(getDamage()))));
         float result = 1;
         if (stack.getOrCreateTag().contains("CD")) {
             double cdMod = stack.getOrCreateTag().getDouble("CD");
             result = (float) Math.max(1 + cdMod, 0);
         }
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(NumberUtil.roundToNthDecimalPlace((float) ((int) (72000 / (getDrawSpeedMultiplier() * result)) / 720) / 100, 2))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new TextComponent(NumberUtil.roundToNthDecimalPlace((float) ((int) (72000 / (getDrawSpeedMultiplier() * result)) / 720) / 100, 2))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(Items.ARROW.getDescriptionId())));
     }
 }

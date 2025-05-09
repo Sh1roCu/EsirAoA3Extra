@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.armour;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class PurityArmour extends AdventArmour {
-    public PurityArmour(EquipmentSlotType slot) {
+    public PurityArmour(EquipmentSlot slot) {
         super(ItemUtil.customArmourMaterial("aoa3:purity", 61, new int[]{5, 8, 8, 3}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), slot);
     }
 
@@ -28,21 +28,21 @@ public class PurityArmour extends AdventArmour {
     }
 
     @Override
-    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlotType> slots) {
+    public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
         if (slots == null && !plData.player().getActiveEffectsMap().isEmpty())
-            checkAndRemoveEffects(plData.player(), Effects.WEAKNESS, Effects.MOVEMENT_SLOWDOWN, Effects.DIG_SLOWDOWN, Effects.BLINDNESS, Effects.CONFUSION);
+            checkAndRemoveEffects(plData.player(), MobEffects.WEAKNESS, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.DIG_SLOWDOWN, MobEffects.BLINDNESS, MobEffects.CONFUSION);
         super.onEffectTick(plData, slots);
     }
 
-    private void checkAndRemoveEffects(PlayerEntity pl, Effect... effects) {
-        for (Effect effect : effects) {
+    private void checkAndRemoveEffects(Player pl, MobEffect... effects) {
+        for (MobEffect effect : effects) {
             if (pl.hasEffect(effect))
                 pl.removeEffect(effect);
         }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(setEffectHeader());
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.esiraoa3extra.purity_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
     }

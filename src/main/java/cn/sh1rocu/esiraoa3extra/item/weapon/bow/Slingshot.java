@@ -1,16 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.bow;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArrowItem;
-import net.minecraft.item.BowItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -22,6 +18,7 @@ import net.tslat.aoa3.util.WorldUtil;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
+
 
 public class Slingshot extends BaseBow {
     public static final Predicate<ItemStack> AMMO_PREDICATE = stack -> stack.getItem() == AoAItems.POP_SHOT.get() || stack.getItem() == Items.FLINT;
@@ -45,7 +42,7 @@ public class Slingshot extends BaseBow {
     }
 
     @Override
-    public void onBlockHit(CustomArrowEntity shot, BlockRayTraceResult rayTrace, Entity shooter) {
+    public void onBlockHit(CustomArrowEntity shot, BlockHitResult rayTrace, Entity shooter) {
         if (shot instanceof PopShotEntity && ((PopShotEntity) shot).isExplosive)
             WorldUtil.createExplosion(shooter, shot.level, shot, 1.0f);
 
@@ -78,10 +75,10 @@ public class Slingshot extends BaseBow {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new StringTextComponent(Double.toString(dmg))));
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText("items.description.damage.arrows", LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, new TextComponent(Double.toString(dmg))));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new StringTextComponent(Double.toString(((72000 / drawSpeedMultiplier) / 720) / (double) 100))));
-        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(AoAItems.POP_SHOT.get().getDescriptionId()).append(new StringTextComponent("/")).append(LocaleUtil.getLocaleMessage(Items.FLINT.getDescriptionId()))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText("items.description.bow.drawSpeed", LocaleUtil.ItemDescriptionType.NEUTRAL, new TextComponent(Double.toString(((72000 / drawSpeedMultiplier) / 720) / (double) 100))));
+        tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Constants.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(AoAItems.POP_SHOT.get().getDescriptionId()).append(new TextComponent("/")).append(LocaleUtil.getLocaleMessage(Items.FLINT.getDescriptionId()))));
     }
 }

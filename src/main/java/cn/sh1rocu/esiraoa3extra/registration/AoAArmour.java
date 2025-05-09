@@ -2,8 +2,8 @@ package cn.sh1rocu.esiraoa3extra.registration;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.armour.*;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -153,18 +153,18 @@ public final class AoAArmour {
             RegistryObject<Item> boot = null;
 
             try {
-                Constructor<? extends AdventArmour> constructor = armourClass.getConstructor(EquipmentSlotType.class);
+                Constructor<? extends AdventArmour> constructor = armourClass.getConstructor(EquipmentSlot.class);
                 helm = AoAArmour.ARMOUR.register(registryPrefix + "_helmet", () -> {
-                    return this.construct(constructor, EquipmentSlotType.HEAD);
+                    return this.construct(constructor, EquipmentSlot.HEAD);
                 });
                 chest = AoAArmour.ARMOUR.register(registryPrefix + "_chestplate", () -> {
-                    return this.construct(constructor, EquipmentSlotType.CHEST);
+                    return this.construct(constructor, EquipmentSlot.CHEST);
                 });
                 legs = AoAArmour.ARMOUR.register(registryPrefix + "_legs", () -> {
-                    return this.construct(constructor, EquipmentSlotType.LEGS);
+                    return this.construct(constructor, EquipmentSlot.LEGS);
                 });
                 boot = AoAArmour.ARMOUR.register(registryPrefix + "_boots", () -> {
-                    return this.construct(constructor, EquipmentSlotType.FEET);
+                    return this.construct(constructor, EquipmentSlot.FEET);
                 });
             } catch (NoSuchMethodException var11) {
                 Logging.logMessage(Level.ERROR, "Somehow we've managed to throw an error while registering armours. I'm really not even sure how this is possible.", var11);
@@ -177,7 +177,7 @@ public final class AoAArmour {
 
         }
 
-        private AdventArmour construct(Constructor<? extends AdventArmour> constructor, EquipmentSlotType slot) {
+        private AdventArmour construct(Constructor<? extends AdventArmour> constructor, EquipmentSlot slot) {
             try {
                 return constructor.newInstance(slot);
             } catch (IllegalAccessException | InvocationTargetException | InstantiationException var4) {

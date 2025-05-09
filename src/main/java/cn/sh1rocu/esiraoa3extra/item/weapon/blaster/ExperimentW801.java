@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.blaster;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Rarity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.ArcwormShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -33,7 +33,7 @@ public class ExperimentW801 extends BaseBlaster {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!verifyStack(stack)) {
             stack.setCount(0);
             entityIn.setSlot(itemSlot, ItemStack.EMPTY);
@@ -57,7 +57,7 @@ public class ExperimentW801 extends BaseBlaster {
         if (!stack.hasTag())
             return false;
 
-        CompoundNBT tag = stack.getTag();
+        CompoundTag tag = stack.getTag();
 
         if (!tag.contains("alien_orb"))
             return false;
@@ -67,7 +67,7 @@ public class ExperimentW801 extends BaseBlaster {
 
     public ItemStack newValidStack() {
         ItemStack stack = new ItemStack(this);
-        CompoundNBT tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getOrCreateTag();
 
         tag.putBoolean("alien_orb", true);
 

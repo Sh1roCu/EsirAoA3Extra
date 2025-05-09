@@ -2,7 +2,7 @@ package cn.sh1rocu.esiraoa3extra.registration;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.attribute.MagicDamage;
-import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

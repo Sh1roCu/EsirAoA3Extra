@@ -4,8 +4,8 @@ import cn.sh1rocu.esiraoa3extra.client.gui.overlay.ScopeOverlayRenderer;
 import cn.sh1rocu.esiraoa3extra.client.model.ModelProperties;
 import cn.sh1rocu.esiraoa3extra.network.ChannelCheckNetwork;
 import cn.sh1rocu.esiraoa3extra.registration.*;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,11 +47,11 @@ public class EsirAoA3Extra {
     public static void clientSetup(FMLClientSetupEvent ev) {
         AoABlocks.setCustomRenderTypes();
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            ev.enqueueWork(() -> RenderTypeLookup.setRenderLayer(AoABlocks.AMPLIFIER_TABLE.get(), RenderType.solid()));
+            ev.enqueueWork(() -> ItemBlockRenderTypes.setRenderLayer(AoABlocks.AMPLIFIER_TABLE.get(), RenderType.solid()));
         }
         ModelProperties.init();
         ScopeOverlayRenderer.init();
         AoATileEntities.registerRenderers();
-        AoAContainers.registerContainerScreens();
+        AoAContainers.registerAbstractContainerScreens();
     }
 }

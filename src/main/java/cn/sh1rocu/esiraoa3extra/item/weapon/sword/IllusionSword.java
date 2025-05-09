@@ -1,13 +1,13 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.sword;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.ItemUtil;
@@ -43,16 +43,16 @@ public class IllusionSword extends BaseSword {
 
                 target.setLastHurtByMob(newTarget);
 
-                if (target instanceof CreatureEntity)
-                    ((CreatureEntity) target).setTarget(newTarget);
+                if (target instanceof PathfinderMob)
+                    ((PathfinderMob) target).setTarget(newTarget);
 
-                target.addEffect(new EffectInstance(Effects.BLINDNESS, 60, 0, false, true));
+                target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0, false, true));
             }
         }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
     }
 }

@@ -1,15 +1,15 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.shotgun;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
@@ -34,7 +34,7 @@ public class DestructionShotgun extends BaseShotgun {
     }
 
     @Override
-    protected boolean fireGun(LivingEntity shooter, ItemStack stack, Hand hand) {
+    protected boolean fireGun(LivingEntity shooter, ItemStack stack, InteractionHand hand) {
         BaseBullet bullet = findAndConsumeAmmo(shooter, stack, hand);
 
         if (bullet == null)
@@ -48,7 +48,7 @@ public class DestructionShotgun extends BaseShotgun {
         float amplifierLevel = 0;
         float starLevel = 0;
         int shellLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.SHELL.get(), stack);
-        if (getGunHand(stack).equals(Hand.MAIN_HAND)) {
+        if (getGunHand(stack).equals(InteractionHand.MAIN_HAND)) {
             float[] attribute = EsirUtil.getAttribute(stack);
             if (attribute[0] != -1) {
                 extraDmg = attribute[0];
@@ -57,7 +57,7 @@ public class DestructionShotgun extends BaseShotgun {
             }
         }
 
-        CompoundNBT nbt;
+        CompoundTag nbt;
         for (int i = 0; i < pellets; i++) {
             BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 4, charged ? 1.5f : 1.0f, 0, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor);
             nbt = pellet.getPersistentData();
@@ -74,7 +74,7 @@ public class DestructionShotgun extends BaseShotgun {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 
         super.appendHoverText(stack, world, tooltip, flag);

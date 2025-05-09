@@ -3,8 +3,12 @@ package cn.sh1rocu.esiraoa3extra.client.model;
 import cn.sh1rocu.esiraoa3extra.item.weapon.bow.BaseBow;
 import cn.sh1rocu.esiraoa3extra.item.weapon.crossbow.BaseCrossbow;
 import cn.sh1rocu.esiraoa3extra.registration.AoAWeapons;
-import net.minecraft.item.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.tslat.aoa3.content.capability.persistentstack.PersistentStackCapabilityHandles;
 import net.tslat.aoa3.content.capability.persistentstack.PersistentStackCapabilityProvider;
 
@@ -93,8 +97,8 @@ public final class ModelProperties {
         }
     }
 
-    private static void registerItemProperty(Item item, String propertyName, IItemPropertyGetter propertyProvider) {
-        ItemModelsProperties.register(item, new ResourceLocation(propertyName), propertyProvider);
+    private static void registerItemProperty(Item item, String propertyName, ItemPropertyFunction propertyProvider) {
+        ItemProperties.register(item, new ResourceLocation(propertyName), propertyProvider);
     }
 
     private static void registerParalyzer() {

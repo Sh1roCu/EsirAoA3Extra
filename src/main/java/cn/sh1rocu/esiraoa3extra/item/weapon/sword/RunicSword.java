@@ -1,17 +1,17 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.sword;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.library.constant.AttackSpeed;
@@ -29,38 +29,38 @@ public class RunicSword extends BaseSword {
 
     @Override
     protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
-        if (!attacker.level.isClientSide && attackCooldown > 0.75 && attacker instanceof PlayerEntity) {
+        if (!attacker.level.isClientSide && attackCooldown > 0.75 && attacker instanceof Player) {
             ItemStack offhandStack = attacker.getOffhandItem();
 
             if (offhandStack.getItem().is(AoATags.Items.ADVENT_RUNE) && offhandStack.getCount() >= 5) {
                 Item rune = offhandStack.getItem();
 
                 if (rune == AoAItems.POISON_RUNE.get()) {
-                    target.addEffect(new EffectInstance(Effects.POISON, 72, 1, false, true));
+                    target.addEffect(new MobEffectInstance(MobEffects.POISON, 72, 1, false, true));
                 } else if (rune == AoAItems.WITHER_RUNE.get()) {
-                    target.addEffect(new EffectInstance(Effects.WITHER, 40, 2, false, true));
+                    target.addEffect(new MobEffectInstance(MobEffects.WITHER, 40, 2, false, true));
                 } else if (rune == AoAItems.FIRE_RUNE.get()) {
                     target.setSecondsOnFire(5);
                 } else if (rune == AoAItems.WIND_RUNE.get()) {
                     DamageUtil.doScaledKnockback(target, attacker, 0.5f, attacker.getX() - target.getX(), attacker.getZ() - target.getZ());
                 } else if (rune == AoAItems.WATER_RUNE.get()) {
-                    target.addEffect(new EffectInstance(Effects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
+                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 0, false, true));
                 } else if (rune == AoAItems.CHARGED_RUNE.get()) {
-                    ((ServerWorld) target.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, target.getX() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), target.getY() + 1 + (random.nextFloat() * target.getBbHeight()), target.getZ() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), 3, 0, 0, 0, 0);
+                    ((ServerLevel) target.level).sendParticles(ParticleTypes.ANGRY_VILLAGER, target.getX() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), target.getY() + 1 + (random.nextFloat() * target.getBbHeight()), target.getZ() + (random.nextFloat() * target.getBbWidth() * 2f) - target.getBbWidth(), 3, 0, 0, 0, 0);
                 } else {
                     return;
                 }
 
-                if (!((PlayerEntity) attacker).isCreative()) {
+                if (!((Player) attacker).isCreative()) {
                     offhandStack.shrink(5);
-                    ItemUtil.damageItem(stack, attacker, 1, EquipmentSlotType.MAINHAND);
+                    ItemUtil.damageItem(stack, attacker, 1, EquipmentSlot.MAINHAND);
                 }
             }
         }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.HARMFUL, 2));
     }

@@ -1,12 +1,12 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.greatblade;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoAWeapons;
 import net.tslat.aoa3.content.entity.projectile.thrown.GrenadeEntity;
 import net.tslat.aoa3.library.constant.AttackSpeed;
@@ -24,15 +24,15 @@ public class BaronGreatblade extends BaseGreatblade {
     @Override
     protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
         if (!attacker.level.isClientSide && attackCooldown > 0.85f) {
-            if (!(attacker instanceof PlayerEntity) || ((PlayerEntity) attacker).isCreative() || ItemUtil.findInventoryItem((PlayerEntity) attacker, new ItemStack(AoAWeapons.GRENADE.get()), true, 1)) {
+            if (!(attacker instanceof Player) || ((Player) attacker).isCreative() || ItemUtil.findInventoryItem((Player) attacker, new ItemStack(AoAWeapons.GRENADE.get()), true, 1)) {
                 attacker.level.addFreshEntity(new GrenadeEntity(attacker, null));
-                ItemUtil.damageItem(stack, attacker, 1, EquipmentSlotType.MAINHAND);
+                ItemUtil.damageItem(stack, attacker, 1, EquipmentSlot.MAINHAND);
             }
         }
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
     }
 }

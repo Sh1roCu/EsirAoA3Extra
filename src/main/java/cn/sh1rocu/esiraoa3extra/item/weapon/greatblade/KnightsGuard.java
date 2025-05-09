@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.greatblade;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.LocaleUtil;
 
@@ -21,8 +21,8 @@ public class KnightsGuard extends BaseGreatblade {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.BLOCK;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
     }
 
     @Override
@@ -37,16 +37,16 @@ public class KnightsGuard extends BaseGreatblade {
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
         player.startUsingItem(hand);
 
-        return ActionResult.success(stack);
+        return InteractionResultHolder.success(stack);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
     }
 }

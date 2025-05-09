@@ -1,6 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.attribute;
 
-import net.minecraft.entity.ai.attributes.RangedAttribute;
+
+import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 
 public class MagicDamage extends RangedAttribute {
 

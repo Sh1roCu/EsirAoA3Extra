@@ -1,14 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -43,10 +43,10 @@ public class SkyStaff extends BaseStaff<Boolean> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, Boolean args) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, Boolean args) {
         caster.setSprinting(true);
-        double xMotion = -MathHelper.sin(caster.yRot / 180.0F * (float) Math.PI) * MathHelper.cos(caster.xRot / 180.0F * (float) Math.PI) * 2f;
-        double zMotion = MathHelper.cos(caster.yRot / 180.0F * (float) Math.PI) * MathHelper.cos(caster.xRot / 180.0F * (float) Math.PI) * 2f;
+        double xMotion = -Mth.sin(caster.yRot / 180.0F * (float) Math.PI) * Mth.cos(caster.xRot / 180.0F * (float) Math.PI) * 2f;
+        double zMotion = Mth.cos(caster.yRot / 180.0F * (float) Math.PI) * Mth.cos(caster.xRot / 180.0F * (float) Math.PI) * 2f;
         double yMotion = caster.getDeltaMovement().y();
 
         if (Math.abs(xMotion) < 0.4 && Math.abs(zMotion) < 0.4) {
@@ -55,13 +55,13 @@ public class SkyStaff extends BaseStaff<Boolean> {
             yMotion += 0.75F;
         }
 
-        caster.setDeltaMovement(new Vector3d(xMotion, yMotion, zMotion));
+        caster.setDeltaMovement(new Vec3(xMotion, yMotion, zMotion));
         caster.hurtMarked = true;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
         super.appendHoverText(stack, world, tooltip, flag);

@@ -1,18 +1,18 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MushroomBlock;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.MushroomBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAItems;
@@ -45,7 +45,7 @@ public class FungalStaff extends BaseStaff<HashMap<BlockPos, Boolean>> {
     @Nullable
     @Override
     public HashMap<BlockPos, Boolean> checkPreconditions(LivingEntity caster, ItemStack staff) {
-        BlockPos.Mutable checkPos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
         HashMap<BlockPos, Boolean> workablePositions = new HashMap<BlockPos, Boolean>();
 
         for (int x = -2; x <= 2; x++) {
@@ -72,8 +72,8 @@ public class FungalStaff extends BaseStaff<HashMap<BlockPos, Boolean>> {
     }
 
     @Override
-    public void cast(World world, ItemStack staff, LivingEntity caster, HashMap<BlockPos, Boolean> args) {
-        if (world instanceof ServerWorld) {
+    public void cast(Level world, ItemStack staff, LivingEntity caster, HashMap<BlockPos, Boolean> args) {
+        if (world instanceof ServerLevel) {
             for (Map.Entry<BlockPos, Boolean> entry : args.entrySet()) {
                 BlockPos pos = entry.getKey();
 
@@ -84,7 +84,7 @@ public class FungalStaff extends BaseStaff<HashMap<BlockPos, Boolean>> {
                     MushroomBlock mushroom = (MushroomBlock) state.getBlock();
 
                     if (mushroom.isBonemealSuccess(world, random, pos, state))
-                        mushroom.performBonemeal((ServerWorld) world, random, pos, state);
+                        mushroom.performBonemeal((ServerLevel) world, random, pos, state);
                 }
 
                 world.levelEvent(2005, pos, 0);
@@ -94,7 +94,7 @@ public class FungalStaff extends BaseStaff<HashMap<BlockPos, Boolean>> {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
         tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
         super.appendHoverText(stack, world, tooltip, flag);
