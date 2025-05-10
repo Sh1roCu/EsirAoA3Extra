@@ -69,7 +69,7 @@ public class BaseSword extends net.tslat.aoa3.content.item.weapon.sword.BaseSwor
             amplifierLevel = (int) attribute[1];
             starLevel = (int) attribute[2];
         }
-        return baseDamage * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        return baseDamage * (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel))));
     }
 
     @Override

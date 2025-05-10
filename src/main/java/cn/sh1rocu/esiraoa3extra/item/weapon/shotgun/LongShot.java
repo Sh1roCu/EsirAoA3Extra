@@ -50,7 +50,7 @@ public class LongShot extends BaseShotgun {
         for (int i = 0; i < pellets; i++) {
             BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 6, 1.0f, 0, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor, (random.nextFloat() - 0.5f) * spreadFactor);
             nbt = pellet.getPersistentData();
-            nbt.putFloat("extraDmgMod", (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+            nbt.putFloat("extraDmgMod", (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel)))));
             nbt.putInt("shellLevel", shellLevel);
             shooter.level.addFreshEntity(pellet);
         }

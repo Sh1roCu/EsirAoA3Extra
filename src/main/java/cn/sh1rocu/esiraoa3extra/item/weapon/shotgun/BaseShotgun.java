@@ -101,7 +101,7 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
             for (int i = 0; i < pellets; ++i) {
                 BaseBullet pellet = new LimoniteBulletEntity(shooter, this, hand, 4, 1.0F, 0, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor, (random.nextFloat() - 0.5F) * spreadFactor);
                 nbt = pellet.getPersistentData();
-                nbt.putFloat("extraDmgMod", (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+                nbt.putFloat("extraDmgMod", (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel)))));
                 nbt.putInt("shellLevel", shellLevel);
                 shooter.level.addFreshEntity(pellet);
             }

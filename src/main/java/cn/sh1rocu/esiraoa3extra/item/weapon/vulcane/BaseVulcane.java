@@ -52,7 +52,7 @@ public abstract class BaseVulcane extends net.tslat.aoa3.content.item.weapon.vul
             amplifierLevel = (int) attribute[1];
             starLevel = (int) attribute[2];
         }
-        float damage = (float) getDamage() * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))) * (1 + ((rage.getCurrentValue() - 50) / 100));
+        float damage = (float) getDamage() * (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel)))) * (1 + ((rage.getCurrentValue() - 50) / 100));
         float targetHealth = pl.getLastHurtByMob().getHealth();
 
         if (DamageUtil.dealVulcaneDamage(pl.getLastHurtByMob(), pl, damage)) {

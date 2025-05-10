@@ -79,7 +79,7 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
                                     starLevel = (int) attribute[2];
                                 }
                             }
-                            float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+                            float extraDmgMod = (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel))));
 
                             CompoundTag nbt = arrow.getPersistentData();
                             nbt.putFloat("extraDmgMod", extraDmgMod);

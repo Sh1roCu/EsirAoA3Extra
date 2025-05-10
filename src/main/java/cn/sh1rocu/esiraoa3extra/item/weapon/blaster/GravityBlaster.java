@@ -43,7 +43,7 @@ public class GravityBlaster extends BaseBlaster {
                 starLevel = (int) attribute[2];
             }
         }
-        float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        float extraDmgMod = (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel))));
 
         for (LivingEntity mob : shooter.level.getEntitiesOfClass(LivingEntity.class, shooter.getBoundingBox().inflate(2, 0, 2), EntityUtil.Predicates.HOSTILE_MOB)) {
             EntityUtil.pushEntityAway(shooter, mob, 0.5f);

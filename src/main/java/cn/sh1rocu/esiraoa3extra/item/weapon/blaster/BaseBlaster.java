@@ -115,7 +115,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
                 starLevel = (int) attribute[2];
             }
         }
-        float extraDmgMod = (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel))));
+        float extraDmgMod = (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel))));
         int rechargeLevel = EnchantmentHelper.getItemEnchantmentLevel(AoAEnchantments.RECHARGE.get(), blaster);
 
         CompoundTag nbt;

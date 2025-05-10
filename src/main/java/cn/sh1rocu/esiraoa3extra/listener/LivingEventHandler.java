@@ -54,7 +54,7 @@ public class LivingEventHandler {
         ItemStack stack = event.getTo();
         float[] attribute = EsirUtil.getAttribute(stack);
         if (EsirUtil.isEsirArmourOrWeapon(stack) && attribute[0] != -1) {
-            double healthAmplifier = attribute[1] + attribute[2] * 10;
+            double healthAmplifier = 4 * attribute[1] + 50 * attribute[2];
             if (healthAmplifier > 0) {
                 EntityUtil.reapplyAttributeModifier((ServerPlayer) event.getEntity(), Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString(uuid), modifierName, healthAmplifier, AttributeModifier.Operation.ADDITION), true);
                 return;
@@ -78,7 +78,7 @@ public class LivingEventHandler {
                     amplifierLevel = (int) attribute[1];
                     starLevel = (int) attribute[2];
                 }
-                ev.setAmount((((BaseMaul) weapon.getItem()).getAttackDamage() + 1) * (1 + extraDmg) * (1 + (0.05f * (amplifierLevel + (10 * starLevel)))));
+                ev.setAmount((((BaseMaul) weapon.getItem()).getAttackDamage() + 1) * (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel)))));
             }
         }
     }
