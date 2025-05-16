@@ -17,6 +17,7 @@
     "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin"
   ],
   "client": [
+    "common.ItemRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
