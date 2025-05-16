@@ -17,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 
-public abstract class StarUpgradeTicket extends Item {
-    public StarUpgradeTicket() {
+public abstract class BaseStarUpgradeTicket extends Item {
+    public BaseStarUpgradeTicket() {
         super((new Item.Properties()).tab(AoAItemGroups.ESIRAOA3ITEMS).rarity(Rarity.EPIC));
 
     }
@@ -32,11 +32,11 @@ public abstract class StarUpgradeTicket extends Item {
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
                 Type type = getType();
                 if (offhand.getItem() instanceof ArmorItem) {
-                    if (type == StarUpgradeTicket.Type.WEAPON) {
+                    if (type == BaseStarUpgradeTicket.Type.WEAPON) {
                         pl.sendMessage(new TextComponent("武器升星券不能为防具升星").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
                         return InteractionResultHolder.fail(ticket);
                     }
-                } else if (type == StarUpgradeTicket.Type.ARMOUR) {
+                } else if (type == BaseStarUpgradeTicket.Type.ARMOUR) {
                     pl.sendMessage(new TextComponent("防具升星券不能为武器升星").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
                     return InteractionResultHolder.fail(ticket);
                 }

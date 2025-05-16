@@ -242,6 +242,7 @@
   "item.esiraoa3extra.cane_bug_spawn_egg": "拐杖糖虫刷怪蛋",
   "item.esiraoa3extra.cannon_frame": "框架：加农炮",
   "item.esiraoa3extra.cannonball": "加农弹",
+  "item.esiraoa3extra.cannonball_magazine": "加农弹弹匣",
   "item.esiraoa3extra.caramel_carver": "焦糖雕琢者",
   "item.esiraoa3extra.caramel_carver.desc.1": "根据周围敌人的数量增加效果时长",
   "item.esiraoa3extra.carrot_cannon": "萝卜加农炮",
@@ -980,6 +981,7 @@
   "item.esiraoa3extra.lightwalker_spawn_egg": "光明步行者刷怪蛋",
   "item.esiraoa3extra.limonite_axe": "褐铁斧",
   "item.esiraoa3extra.limonite_bullet": "褐铁子弹",
+  "item.esiraoa3extra.limonite_bullet_magazine": "褐铁子弹弹匣",
   "item.esiraoa3extra.limonite_ingot": "褐铁锭",
   "item.esiraoa3extra.limonite_nugget": "褐铁粒",
   "item.esiraoa3extra.limonite_pickaxe": "褐铁镐",
@@ -1094,6 +1096,7 @@
   "item.esiraoa3extra.merkyre_spawn_egg": "默克刷怪蛋",
   "item.esiraoa3extra.mermage_spawn_egg": "海灵法师刷怪蛋",
   "item.esiraoa3extra.metal_slug": "重铅弹",
+  "item.esiraoa3extra.metal_slug_magazine": "重铅弹弹匣",
   "item.esiraoa3extra.metal_tub": "金属桶",
   "item.esiraoa3extra.metalloid_spawn_egg": "金属收藏家刷怪蛋",
   "item.esiraoa3extra.meteor_staff": "流星法杖",
@@ -1682,6 +1685,7 @@
   "item.esiraoa3extra.spirit_shower": "精神涤荡者",
   "item.esiraoa3extra.spirit_shower.desc.1": "发射3枚爆炸弹",
   "item.esiraoa3extra.spreadshot": "霰弹",
+  "item.esiraoa3extra.spreadshot_magazine": "霰弹弹匣",
   "item.esiraoa3extra.squad_gun": "小队机枪",
   "item.esiraoa3extra.squasher_spawn_egg": "窝瓜刷怪蛋",
   "item.esiraoa3extra.squiggler_spawn_egg": "史奎格刷怪蛋",
@@ -2016,5 +2020,5 @@
   "items.description.unbreakable": "不可破坏",
   "items.description.vulcane.target": "攻击后，需要等待5秒才能进行下次攻击",
   "items.description.vulcane.use": "攻击需要消耗20点怒火",
-  "CreativeModeTab.esiraoa3extra.all": "Esir虚无世界：全部物品"
+  "itemGroup.esiraoa3extra.all": "Esir虚无世界：全部物品"
 }

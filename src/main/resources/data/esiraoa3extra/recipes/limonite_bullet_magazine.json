@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "aoa3:limonite_bullet"
+    },
+    "M": {
+      "item": "aoa3:gun_frame"
+    }
+  },
+  "pattern": [
+    "###",
+    "#M#",
+    "###"
+  ],
+  "result": {
+    "item": "esiraoa3extra:limonite_bullet_magazine"
+  }
+}

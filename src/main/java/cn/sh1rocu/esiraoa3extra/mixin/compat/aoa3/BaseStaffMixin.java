@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.compat.aoa3;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.item.Item;

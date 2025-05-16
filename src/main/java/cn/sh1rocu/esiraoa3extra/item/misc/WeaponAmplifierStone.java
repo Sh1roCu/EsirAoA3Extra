@@ -1,6 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.item.misc;
 
-public class WeaponAmplifierStone extends AmplifierStone {
+public class WeaponAmplifierStone extends BaseAmplifierStone {
     public WeaponAmplifierStone() {
         super();
     }

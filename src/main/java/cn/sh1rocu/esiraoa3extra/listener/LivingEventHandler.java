@@ -2,9 +2,11 @@ package cn.sh1rocu.esiraoa3extra.listener;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import cn.sh1rocu.esiraoa3extra.item.armour.AdventArmour;
+import cn.sh1rocu.esiraoa3extra.item.misc.BaseMagazine;
 import cn.sh1rocu.esiraoa3extra.item.weapon.maul.BaseMaul;
 import cn.sh1rocu.esiraoa3extra.registration.EsirAttributes;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +19,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -98,6 +101,15 @@ public class LivingEventHandler {
             if (magicModifier != null) {
                 ev.setAmount((float) (ev.getAmount() * magicModifier.getValue()));
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onCrafted(PlayerEvent.ItemCraftedEvent event) {
+        ItemStack stack = event.getCrafting();
+        if (!event.isCanceled() && stack.getItem() instanceof BaseMagazine) {
+            CompoundTag nbt = stack.getOrCreateTag();
+            nbt.putInt("remaining_bullets", 8);
         }
     }
 }

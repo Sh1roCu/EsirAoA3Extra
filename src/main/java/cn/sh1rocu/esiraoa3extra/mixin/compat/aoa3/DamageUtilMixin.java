@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.compat.aoa3;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.core.NonNullList;

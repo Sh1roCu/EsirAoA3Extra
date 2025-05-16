@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "aoa3:metal_slug"
+    },
+    "M": {
+      "item": "aoa3:sniper_frame"
+    }
+  },
+  "pattern": [
+    "###",
+    "#M#",
+    "###"
+  ],
+  "result": {
+    "item": "esiraoa3extra:metal_slug_magazine"
+  }
+}

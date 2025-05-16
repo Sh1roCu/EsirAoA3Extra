@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.compat.aoa3;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;

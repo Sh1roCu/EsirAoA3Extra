@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class AoAItemGroups {
-    public static final ArrayList<AoACreativeModeTab> REGISTERED_ITEM_GROUPS = new ArrayList();
+    public static final ArrayList<AoACreativeModeTab> REGISTERED_ITEM_GROUPS = new ArrayList<>();
     public static final CreativeModeTab ESIRAOA3ITEMS = new AoACreativeModeTab("Esir-AoA All Items", "all", () -> new ItemStack(AoABlocks.AMPLIFIER_TABLE.get()));
 
     public AoAItemGroups() {

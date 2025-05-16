@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.compat.apotheosis;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;

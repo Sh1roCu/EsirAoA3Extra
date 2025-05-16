@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.compat.apotheosis;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.world.item.ItemStack;

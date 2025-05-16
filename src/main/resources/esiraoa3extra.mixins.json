@@ -2,18 +2,19 @@
   "required": true,
   "minVersion": "0.8",
   "package": "cn.sh1rocu.esiraoa3extra.mixin",
-  "plugin": "cn.sh1rocu.esiraoa3extra.mixin.MixinPlugin",
+  "plugin": "cn.sh1rocu.esiraoa3extra.plugin.MixinPlugin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "esiraoa3extra.refmap.json",
   "mixins": [
-    "AoAEntitySpawns$SpawnPredicatesMixin",
-    "BaseCrossbowMixin",
-    "BaseGunMixin",
-    "BaseStaffMixin",
-    "DamageUtilMixin",
-    "EnchantmentMixin",
-    "PlayerMixin",
-    "ShellEnchantmentMixin"
+    "common.PlayerMixin",
+    "compat.aoa3.BaseGunMixin",
+    "compat.aoa3.BaseStaffMixin",
+    "compat.aoa3.DamageUtilMixin",
+    "compat.aoa3.ItemUtilMixin",
+    "compat.aoa3.ShellEnchantmentMixin",
+    "compat.apotheosis.BaseCrossbowMixin",
+    "compat.apotheosis.EnchantmentMixin",
+    "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin"
   ],
   "client": [
   ],

@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin;
+package cn.sh1rocu.esiraoa3extra.mixin.common;
 
 import cn.sh1rocu.esiraoa3extra.registration.EsirAttributes;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "aoa3:spreadshot"
+    },
+    "M": {
+      "item": "aoa3:shotgun_frame"
+    }
+  },
+  "pattern": [
+    "###",
+    "#M#",
+    "###"
+  ],
+  "result": {
+    "item": "esiraoa3extra:spreadshot_magazine"
+  }
+}

@@ -242,6 +242,7 @@
   "item.esiraoa3extra.cane_bug_spawn_egg": "Cane Bug Spawn Egg",
   "item.esiraoa3extra.cannon_frame": "Cannon Frame",
   "item.esiraoa3extra.cannonball": "Cannonball",
+  "item.esiraoa3extra.cannonball_magazine": "Cannonball Magazine",
   "item.esiraoa3extra.caramel_carver": "Caramel Carver",
   "item.esiraoa3extra.caramel_carver.desc.1": "Duration increases depending on number of nearby enemies",
   "item.esiraoa3extra.carrot_cannon": "Carrot Cannon",
@@ -980,6 +981,7 @@
   "item.esiraoa3extra.lightwalker_spawn_egg": "Lightwalker Spawn Egg",
   "item.esiraoa3extra.limonite_axe": "Limonite Axe",
   "item.esiraoa3extra.limonite_bullet": "Limonite Bullet",
+  "item.esiraoa3extra.limonite_bullet_magazine": "Limonite Bullet Magazine",
   "item.esiraoa3extra.limonite_ingot": "Limonite Ingot",
   "item.esiraoa3extra.limonite_nugget": "Limonite Nugget",
   "item.esiraoa3extra.limonite_pickaxe": "Limonite Pickaxe",
@@ -1094,6 +1096,7 @@
   "item.esiraoa3extra.merkyre_spawn_egg": "Merkyre Spawn Egg",
   "item.esiraoa3extra.mermage_spawn_egg": "Mermage Spawn Egg",
   "item.esiraoa3extra.metal_slug": "Metal Slug",
+  "item.esiraoa3extra.metal_slug_magazine": "Metal Slug Magazine",
   "item.esiraoa3extra.metal_tub": "Metal Tub",
   "item.esiraoa3extra.metalloid_spawn_egg": "Metalloid Spawn Egg",
   "item.esiraoa3extra.meteor_staff": "Meteor Staff",
@@ -1682,6 +1685,7 @@
   "item.esiraoa3extra.spirit_shower": "Spirit Shower",
   "item.esiraoa3extra.spirit_shower.desc.1": "Fires 3 explosive beams",
   "item.esiraoa3extra.spreadshot": "Spreadshot",
+  "item.esiraoa3extra.spreadshot_magazine": "Spreadshot Magazine",
   "item.esiraoa3extra.squad_gun": "Squad Gun",
   "item.esiraoa3extra.squasher_spawn_egg": "Squasher Spawn Egg",
   "item.esiraoa3extra.squiggler_spawn_egg": "Squiggler Spawn Egg",
@@ -2016,5 +2020,5 @@
   "items.description.unbreakable": "Unbreakable",
   "items.description.vulcane.target": "Can only be used within 5 seconds of last attack taken",
   "items.description.vulcane.use": "Usable when at least 50 Rage has been accrued",
-  "CreativeModeTab.esiraoa3extra.all": "Esir-AoA All Items"
+  "itemGroup.esiraoa3extra.all": "Esir-AoA All Items"
 }

@@ -18,8 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 
-public abstract class DivineBlessingTalisman extends Item {
-    public DivineBlessingTalisman() {
+public abstract class BaseDivineBlessingTalisman extends Item {
+    public BaseDivineBlessingTalisman() {
         super((new Item.Properties()).tab(AoAItemGroups.ESIRAOA3ITEMS).rarity(Rarity.EPIC));
     }
 

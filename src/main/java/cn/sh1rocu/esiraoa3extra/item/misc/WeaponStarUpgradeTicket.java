@@ -1,6 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.item.misc;
 
-public class WeaponStarUpgradeTicket extends StarUpgradeTicket {
+public class WeaponStarUpgradeTicket extends BaseStarUpgradeTicket {
     public WeaponStarUpgradeTicket() {
         super();
     }

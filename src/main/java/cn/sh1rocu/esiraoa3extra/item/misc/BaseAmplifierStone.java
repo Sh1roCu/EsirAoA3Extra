@@ -17,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 
-public abstract class AmplifierStone extends Item {
-    public AmplifierStone() {
+public abstract class BaseAmplifierStone extends Item {
+    public BaseAmplifierStone() {
         super((new Item.Properties()).tab(AoAItemGroups.ESIRAOA3ITEMS).rarity(Rarity.EPIC));
     }
 
@@ -30,14 +30,14 @@ public abstract class AmplifierStone extends Item {
             ServerPlayer pl = (ServerPlayer) player;
             ItemStack offhand = pl.getItemInHand(InteractionHand.OFF_HAND);
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
-                if (amplifierStone.getItem() instanceof AmplifierStone) {
+                if (amplifierStone.getItem() instanceof BaseAmplifierStone) {
                     Type type = getType();
                     if (offhand.getItem() instanceof ArmorItem) {
-                        if (type == AmplifierStone.Type.WEAPON) {
+                        if (type == BaseAmplifierStone.Type.WEAPON) {
                             pl.sendMessage(new TextComponent("武器强化石不能增幅防具").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
                             return InteractionResultHolder.fail(amplifierStone);
                         }
-                    } else if (type == AmplifierStone.Type.ARMOUR) {
+                    } else if (type == BaseAmplifierStone.Type.ARMOUR) {
                         pl.sendMessage(new TextComponent("防具强化石不能增幅武器").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
                         return InteractionResultHolder.fail(amplifierStone);
                     }

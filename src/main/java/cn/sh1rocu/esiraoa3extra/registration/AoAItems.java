@@ -20,6 +20,10 @@ public class AoAItems {
     public static final RegistryObject<Item> DIVINE_BLESSING_TALISMAN_ARMOUR;
     public static final RegistryObject<Item> STARUPGRADETICKET_WEAPON;
     public static final RegistryObject<Item> STARUPGRADETICKET_ARMOUR;
+    public static final RegistryObject<Item> LIMONITE_BULLET_MAGAZINE;
+    public static final RegistryObject<Item> METAL_SLUG_MAGAZINE;
+    public static final RegistryObject<Item> SPREADSHOT_MAGAZINE;
+    public static final RegistryObject<Item> CANNONBALL_MAGAZINE;
 
 
     static {
@@ -32,6 +36,10 @@ public class AoAItems {
         DIVINE_BLESSING_TALISMAN_ARMOUR = registerItem("divine_blessing_talisman_armour", ArmourDBTalisman::new);
         STARUPGRADETICKET_WEAPON = registerItem("starupgradeticket_weapon", WeaponStarUpgradeTicket::new);
         STARUPGRADETICKET_ARMOUR = registerItem("starupgradeticket_armour", ArmourStarUpgradeTicket::new);
+        LIMONITE_BULLET_MAGAZINE = registerItem("limonite_bullet_magazine", LimoniteBulletMagazine::new);
+        METAL_SLUG_MAGAZINE = registerItem("metal_slug_magazine", MetalSlugMagazine::new);
+        SPREADSHOT_MAGAZINE = registerItem("spreadshot_magazine", SpreadshotMagazine::new);
+        CANNONBALL_MAGAZINE = registerItem("cannonball_magazine", CannonballMagazine::new);
     }
 
     private static <T extends Item> RegistryObject<T> registerItem(String registryId, Supplier<T> item) {
