@@ -35,6 +35,7 @@ public class DamageUtilMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/damagesource/DamageSource;bypassArmor()Lnet/minecraft/world/damagesource/DamageSource;",
+                    remap = true,
                     ordinal = 1
             )
     )

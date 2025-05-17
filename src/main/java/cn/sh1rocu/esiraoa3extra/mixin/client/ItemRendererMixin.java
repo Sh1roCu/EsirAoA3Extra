@@ -1,4 +1,4 @@
-package cn.sh1rocu.esiraoa3extra.mixin.common;
+package cn.sh1rocu.esiraoa3extra.mixin.client;
 
 import cn.sh1rocu.esiraoa3extra.item.misc.BaseMagazine;
 import com.mojang.blaze3d.platform.GlStateManager;
