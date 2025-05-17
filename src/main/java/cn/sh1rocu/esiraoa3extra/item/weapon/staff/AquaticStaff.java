@@ -52,7 +52,7 @@ public class AquaticStaff extends BaseStaff<Object> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        return DamageUtil.dealMagicDamage(shot, shooter, target, shooter.isInWater() ? getDmg() * 1.4f * totalMod : getDmg() * totalMod, false);
+        return DamageUtil.dealMagicDamage(shot, shooter, target, shooter.isInWater() ? getDmg() * 1.4f * totalMod : getDmg() * totalMod, true);
     }
 
     @Override

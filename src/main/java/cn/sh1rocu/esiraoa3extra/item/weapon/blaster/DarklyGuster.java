@@ -51,7 +51,7 @@ public class DarklyGuster extends BaseBlaster {
         float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
         for (Entity entity : nearbyTargets) {
-            success |= DamageUtil.dealBlasterDamage(shooter, entity, shot, splitDmg * rechargeMod * extraDmgMod, false);
+            success |= DamageUtil.dealBlasterDamage(shooter, entity, shot, splitDmg * rechargeMod * extraDmgMod, true);
         }
 
         return success;

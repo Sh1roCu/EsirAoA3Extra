@@ -48,7 +48,7 @@ public class GhoulStaff extends BaseStaff<Object> {
 
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-        return DamageUtil.dealMagicDamage(shot, shooter, target, RandomUtil.randomNumberBetween(16, 42), false);
+        return DamageUtil.dealMagicDamage(shot, shooter, target, RandomUtil.randomNumberBetween(16, 42), true);
     }
 
     @OnlyIn(Dist.CLIENT)

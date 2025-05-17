@@ -51,7 +51,7 @@ public class FireStaff extends BaseStaff<Object> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true)) {
             target.setSecondsOnFire(11);
 
             return true;

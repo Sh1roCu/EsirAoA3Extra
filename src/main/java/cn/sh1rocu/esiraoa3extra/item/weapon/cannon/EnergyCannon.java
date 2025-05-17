@@ -51,7 +51,7 @@ public class EnergyCannon extends BaseCannon {
                     DamageUtil.doScaledKnockback((LivingEntity) target, shooter, ((float) getDamage() * 0.75f * bulletDmgMultiplier) / 10f, shooter.getX() - target.getX(), shooter.getZ() - target.getZ());
             }
 
-            DamageUtil.dealMagicDamage(bullet, shooter, target, (float) getDamage() * bulletDmgMultiplier * 0.25f, false);
+            DamageUtil.dealMagicDamage(bullet, shooter, target, (float) getDamage() * bulletDmgMultiplier * 0.25f, true);
         }
     }
 

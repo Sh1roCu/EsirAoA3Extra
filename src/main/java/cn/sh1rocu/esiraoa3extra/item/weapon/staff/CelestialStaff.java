@@ -73,7 +73,7 @@ public class CelestialStaff extends BaseStaff<BlockPos> {
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
         WorldUtil.createExplosion(shooter, shot.level, shot, 2.5f);
-        return DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false);
+        return DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true);
     }
 
     @Override

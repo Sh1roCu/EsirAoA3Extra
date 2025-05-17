@@ -152,7 +152,7 @@ public abstract class BaseBlaster extends net.tslat.aoa3.content.item.weapon.bla
         CompoundTag nbt = shot.getPersistentData();
         float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
         float rechargeMod = 1 + 0.04f * nbt.getInt("rechargeLevel");
-        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * rechargeMod * extraDmgMod, false)) {
+        if (DamageUtil.dealBlasterDamage(shooter, target, shot, (float) baseDmg * rechargeMod * extraDmgMod, true)) {
             doImpactEffect(shot, target, shooter);
 
             return true;
