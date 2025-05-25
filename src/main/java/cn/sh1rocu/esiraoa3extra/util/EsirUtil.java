@@ -27,8 +27,8 @@ public class EsirUtil {
             ApotheosisObjects.SEA_INFUSION.getDescriptionId(),
             ApotheosisObjects.HELL_INFUSION.getDescriptionId(),
             ApotheosisObjects.NATURES_BLESSING.getDescriptionId(),
-            ApotheosisObjects.TRUE_INFINITY.getDescriptionId(),
-            ApotheosisObjects.CAPTURING.getDescriptionId()
+            ApotheosisObjects.TRUE_INFINITY.getDescriptionId()
+            //ApotheosisObjects.CAPTURING.getDescriptionId()
     );
 
     private static final float BROKEN = 0.3f;

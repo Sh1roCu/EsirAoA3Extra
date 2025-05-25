@@ -57,7 +57,7 @@ public class LivingEventHandler {
         ItemStack stack = event.getTo();
         float[] attribute = EsirUtil.getAttribute(stack);
         if (EsirUtil.isEsirArmourOrWeapon(stack) && attribute[0] != -1) {
-            double healthAmplifier = 4 * attribute[1] + 50 * attribute[2];
+            double healthAmplifier = attribute[1] + 12.5 * attribute[2];
             if (healthAmplifier > 0) {
                 EntityUtil.reapplyAttributeModifier((ServerPlayer) event.getEntity(), Attributes.MAX_HEALTH, new AttributeModifier(UUID.fromString(uuid), modifierName, healthAmplifier, AttributeModifier.Operation.ADDITION), true);
                 return;
