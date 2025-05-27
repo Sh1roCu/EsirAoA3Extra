@@ -23,8 +23,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 
 import java.util.UUID;
 
@@ -102,6 +104,21 @@ public class LivingEventHandler {
                 ev.setAmount((float) (ev.getAmount() * magicModifier.getValue()));
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onAllDamageAmplify(LivingHurtEvent ev) {
+        Entity attacker = ev.getSource().getEntity();
+        Player player = null;
+        if (attacker instanceof Player)
+            player = (Player) attacker;
+        else if (attacker instanceof Projectile && ((Projectile) attacker).getOwner() instanceof Player)
+            player = (Player) ((Projectile) attacker).getOwner();
+        if (player == null)
+            return;
+        int cycles = PlayerUtil.getSkill(player, AoASkills.INNERVATION.get()).getCycles();
+        if (cycles > 0)
+            ev.setAmount(ev.getAmount() * (1 + cycles * 0.02F));
     }
 
     @SubscribeEvent

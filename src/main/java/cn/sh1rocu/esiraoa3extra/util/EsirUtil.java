@@ -11,14 +11,20 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.tslat.aoa3.player.skill.*;
+import net.tslat.aoa3.util.EntityUtil;
 import shadows.apotheosis.ApotheosisObjects;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class EsirUtil {
     public static final List<String> BLACKLIST_ENCHANTMENTS = Arrays.asList(
@@ -31,9 +37,46 @@ public class EsirUtil {
             //ApotheosisObjects.CAPTURING.getDescriptionId()
     );
 
+    private static final String FARMING_MODIFIER_UUID = "ecdc4919-fbc0-fafd-4aca-c41aabdd8013";
+    private static final String DEXTERITY_MODIFIER_UUID = "0b749ea5-c17b-2f76-d7e6-81bd006299f1";
+    private static final String HAULING_MODIFIER_UUID = "bed50d2a-8e67-d4f3-1759-6e8938c1891e";
+    private static final String EXTRACTION_MODIFIER_UUID = "0450e8e0-cb28-cc59-e8a9-43459a8e2ff7";
+
     private static final float BROKEN = 0.3f;
     private static final float SAME = 4.7f;
     private static final int DECREASE = 5;
+
+    public static void applyAoASkillBuff(AoASkill.Instance skill) {
+        String uuid = "";
+        String modifierName = "";
+        Attribute attribute = null;
+        double modifierValue = 0;
+        int cycles = skill.getCycles();
+        if (skill instanceof FarmingSkill) {
+            uuid = FARMING_MODIFIER_UUID;
+            modifierName = "farming_cycle_buff";
+            attribute = Attributes.MAX_HEALTH;
+            modifierValue = 5 * cycles;
+        } else if (skill instanceof DexteritySkill) {
+            uuid = DEXTERITY_MODIFIER_UUID;
+            modifierName = "dexterity_cycle_buff";
+            attribute = Attributes.MOVEMENT_SPEED;
+            modifierValue = 0.003 * cycles;
+        } else if (skill instanceof HaulingSkill) {
+            uuid = HAULING_MODIFIER_UUID;
+            modifierName = "hauling_cycle_buff";
+            attribute = Attributes.LUCK;
+            modifierValue = 0.5 * cycles;
+        } else if (skill instanceof ExtractionSkill) {
+            uuid = EXTRACTION_MODIFIER_UUID;
+            modifierName = "extraction_cycle_buff";
+            attribute = Attributes.KNOCKBACK_RESISTANCE;
+            modifierValue = 0.5 * cycles;
+        }
+        if (!uuid.isEmpty()) {
+            EntityUtil.reapplyAttributeModifier(skill.getPlayer(), attribute, new AttributeModifier(UUID.fromString(uuid), modifierName, modifierValue, AttributeModifier.Operation.ADDITION), true);
+        }
+    }
 
     public static boolean isEsirArmourOrWeapon(ItemStack stack) {
         ResourceLocation registerName = stack.getItem().getRegistryName();
