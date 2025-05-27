@@ -11,6 +11,7 @@
     "compat.aoa3.BaseGunMixin",
     "compat.aoa3.BaseStaffMixin",
     "compat.aoa3.DamageUtilMixin",
+    "compat.aoa3.HaulingRodMixin",
     "compat.aoa3.ItemUtilMixin",
     "compat.aoa3.ShellEnchantmentMixin",
     "compat.apotheosis.BaseCrossbowMixin",
