@@ -6,6 +6,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "esiraoa3extra.refmap.json",
   "mixins": [
+    "common.DigDurabilityEnchantmentMixin",
+    "common.ItemStackMixin",
     "common.PlayerMixin",
     "compat.aoa3.AoASkill$InstanceMixin",
     "compat.aoa3.BaseGunMixin",
