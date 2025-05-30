@@ -9,6 +9,7 @@
     "common.DigDurabilityEnchantmentMixin",
     "common.ItemStackMixin",
     "common.PlayerMixin",
+    "compat.aoa3.AoAEntitySpawns$SpawnPredicatesMixin",
     "compat.aoa3.AoASkill$InstanceMixin",
     "compat.aoa3.BaseGunMixin",
     "compat.aoa3.BaseStaffMixin",

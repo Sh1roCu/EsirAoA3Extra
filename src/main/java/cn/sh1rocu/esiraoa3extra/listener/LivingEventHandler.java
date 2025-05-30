@@ -7,6 +7,7 @@ import cn.sh1rocu.esiraoa3extra.item.weapon.maul.BaseMaul;
 import cn.sh1rocu.esiraoa3extra.registration.EsirAttributes;
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -17,13 +18,19 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.dimension.LelyetiaEvents;
+import net.tslat.aoa3.event.dimension.LunalusEvents;
+import net.tslat.aoa3.event.dimension.VoxPondsEvents;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.PlayerUtil;
@@ -127,6 +134,47 @@ public class LivingEventHandler {
         if (!event.isCanceled() && stack.getItem() instanceof BaseMagazine) {
             CompoundTag nbt = stack.getOrCreateTag();
             nbt.putInt("remaining_bullets", 8);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent ev) {
+        if (ev.phase == TickEvent.Phase.END) {
+            ResourceLocation world = ev.player.level.dimension().location();
+            if ("minecraft".equals(world.getNamespace())) {
+                if ("hewd".equals(world.getPath())) {
+                    LelyetiaEvents.doPlayerTick(ev.player);
+                } else if ("wz".equals(world.getPath())) {
+                    VoxPondsEvents.doPlayerTick(ev.player);
+                } else if ("yq".equals(world.getPath())) {
+                    LunalusEvents.doPlayerTick(ev.player);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJump(LivingEvent.LivingJumpEvent ev) {
+        if (ev.getEntityLiving() instanceof Player) {
+            ResourceLocation world = ev.getEntity().level.dimension().location();
+            if ("minecraft".equals(world.getNamespace())) {
+                if ("yq".equals(world.getPath())) {
+                    LunalusEvents.doPlayerJump((Player) ev.getEntity());
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerFall(LivingFallEvent ev) {
+        if (ev.getEntityLiving() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) ev.getEntityLiving();
+            ResourceLocation world = player.level.dimension().location();
+            if ("minecraft".equals(world.getNamespace())) {
+                if ("yq".equals(world.getPath())) {
+                    LunalusEvents.doPlayerLanding(player, ev);
+                }
+            }
         }
     }
 }
