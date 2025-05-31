@@ -18,12 +18,11 @@ public class AoAEntitySpawns$SpawnPredicatesMixin {
 
     @ModifyExpressionValue(remap = false, method = "lambda$static$1", at = @At(remap = true, value = "INVOKE", target = "Lnet/tslat/aoa3/util/WorldUtil;isWorld(Lnet/minecraft/world/level/ServerLevelAccessor;[Lnet/minecraft/resources/ResourceKey;)Z"))
     private static boolean canSpawnInMining4MONSTER(boolean origin, @Local(argsOnly = true) ServerLevelAccessor world) {
-        return esirAoA3Extra$isMiningWorld(world);
+        return origin || esirAoA3Extra$isMiningWorld(world);
     }
 
     @ModifyExpressionValue(remap = false, method = "lambda$static$2", at = @At(remap = true, value = "INVOKE", target = "Lnet/tslat/aoa3/util/WorldUtil;isWorld(Lnet/minecraft/world/level/ServerLevelAccessor;[Lnet/minecraft/resources/ResourceKey;)Z"))
     private static boolean canSpawnInMining4WATER_MONSTER(boolean origin, @Local(argsOnly = true) ServerLevelAccessor world) {
-        return esirAoA3Extra$isMiningWorld(world);
-
+        return origin || esirAoA3Extra$isMiningWorld(world);
     }
 }
