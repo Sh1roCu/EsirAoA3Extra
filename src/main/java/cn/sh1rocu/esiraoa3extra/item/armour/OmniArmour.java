@@ -38,7 +38,7 @@ public class OmniArmour extends AdventArmour {
     @Override
     public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
         if (slots == null && DamageUtil.isMeleeDamage(event.getSource()))
-            WorldUtil.createExplosion(plData.player(), plData.player().level, plData.player().blockPosition(), 1.75f);
+            WorldUtil.createExplosion(plData.player(), plData.player().level, plData.player().blockPosition(), 1F);
         super.onPostAttackReceived(plData, slots, event);
     }
 

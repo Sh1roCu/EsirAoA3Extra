@@ -25,7 +25,7 @@ public class ArchaicArmour extends AdventArmour {
     @Override
     public void onDamageDealt(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
         if (slots != null && DamageUtil.isMeleeDamage(event.getSource()))
-            event.setAmount(event.getAmount() * (1 + 0.1875f * slots.size() * (1 - EntityUtil.getCurrentHealthPercent(plData.player()))));
+            event.setAmount(event.getAmount() * (1 + 0.18f * slots.size() * (1 - EntityUtil.getCurrentHealthPercent(plData.player()))));
         super.onDamageDealt(plData, slots, event);
     }
 
