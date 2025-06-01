@@ -58,6 +58,8 @@ dependencies {
     modImplementation "curse.maven:placebo-283644:4501015"
     modImplementation "curse.maven:apotheosis-313970:3936649"
     modImplementation "curse.maven:enhanced-celestials-438447:3532022"
+    modImplementation "curse.maven:mobifier-485705:3779942"
+    modImplementation "curse.maven:enhanced-celestials-mobifier-integration-620658:3780135"
     shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
     forgeRuntimeLibrary("io.github.llamalad7:mixinextras-common:0.4.1")
 }

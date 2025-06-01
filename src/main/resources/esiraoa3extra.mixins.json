@@ -19,7 +19,8 @@
     "compat.aoa3.ShellEnchantmentMixin",
     "compat.apotheosis.BaseCrossbowMixin",
     "compat.apotheosis.EnchantmentMixin",
-    "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin"
+    "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin",
+    "compat.mobifier.NaturalSpawnerMixin"
   ],
   "client": [
     "client.ItemRendererMixin"
