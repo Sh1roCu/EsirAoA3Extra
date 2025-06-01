@@ -19,7 +19,7 @@ public class NaturalSpawnerMixin {
             LunarContext lunarContext = ((EnhancedCelestialsWorldData) mob.level).getLunarContext();
             if (lunarContext != null) {
                 LunarMobSpawnInfo lunarSpawner = lunarContext.getCurrentEvent().getLunarSpawner();
-                if (lunarSpawner != null && lunarSpawner.getSpawnInfo().getEntityTypes().contains(mob.getType())) {
+                if (lunarSpawner != null && lunarSpawner.getSpawnInfo().getMobs(mob.getType().getCategory()).stream().anyMatch(spawnerData -> spawnerData.type == mob.getType())) {
                     mob.setHealth(mob.getMaxHealth());
                 }
             }
