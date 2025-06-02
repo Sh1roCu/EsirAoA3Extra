@@ -61,6 +61,7 @@ public abstract class BaseMagazine extends Item {
         int count = stack.getOrCreateTag().getInt("remaining_bullets");
         tooltips.add(new TextComponent("弹药类型：").withStyle(ChatFormatting.GREEN).append(bullet));
         tooltips.add(new TextComponent("剩余弹药量：").withStyle(ChatFormatting.AQUA).append(String.valueOf(count)));
+        tooltips.add(new TextComponent("潜行状态下右键使用弹匣以装填").withStyle(ChatFormatting.AQUA));
     }
 
     public String getBulletName(Type type) {

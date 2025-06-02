@@ -33,7 +33,8 @@ public class EsirUtil {
             ApotheosisObjects.SEA_INFUSION.getDescriptionId(),
             ApotheosisObjects.HELL_INFUSION.getDescriptionId(),
             ApotheosisObjects.NATURES_BLESSING.getDescriptionId(),
-            ApotheosisObjects.TRUE_INFINITY.getDescriptionId()
+            ApotheosisObjects.TRUE_INFINITY.getDescriptionId(),
+            ApotheosisObjects.REBOUNDING.getDescriptionId()
             //ApotheosisObjects.CAPTURING.getDescriptionId()
     );
 
