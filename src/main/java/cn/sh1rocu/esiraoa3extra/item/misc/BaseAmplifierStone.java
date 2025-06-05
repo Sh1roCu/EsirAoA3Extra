@@ -26,36 +26,34 @@ public abstract class BaseAmplifierStone extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack amplifierStone = player.getItemInHand(hand);
-        if (player instanceof ServerPlayer) {
+        if (player instanceof ServerPlayer && hand == InteractionHand.MAIN_HAND) {
             ServerPlayer pl = (ServerPlayer) player;
             ItemStack offhand = pl.getItemInHand(InteractionHand.OFF_HAND);
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
-                if (amplifierStone.getItem() instanceof BaseAmplifierStone) {
-                    Type type = getType();
-                    if (offhand.getItem() instanceof ArmorItem) {
-                        if (type == BaseAmplifierStone.Type.WEAPON) {
-                            pl.sendMessage(new TextComponent("武器强化石不能增幅防具").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
-                            return InteractionResultHolder.fail(amplifierStone);
-                        }
-                    } else if (type == BaseAmplifierStone.Type.ARMOUR) {
-                        pl.sendMessage(new TextComponent("防具强化石不能增幅武器").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
+                Type type = getType();
+                if (offhand.getItem() instanceof ArmorItem) {
+                    if (type == BaseAmplifierStone.Type.WEAPON) {
+                        pl.sendMessage(new TextComponent("武器强化石不能增幅防具").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
                         return InteractionResultHolder.fail(amplifierStone);
                     }
-                    float[] attribute = EsirUtil.getAttribute(offhand);
-                    if (attribute[0] == -1) {
-                        pl.sendMessage(new TextComponent("该装备处于损毁状态，无法进行增幅").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
-                        return InteractionResultHolder.fail(amplifierStone);
-                    }
-                    ItemStack newEquip = EsirUtil.amplifyEquip(pl, offhand, attribute);
-                    if (!newEquip.isEmpty())
-                        pl.setItemSlot(EquipmentSlot.OFFHAND, newEquip);
-                    amplifierStone.shrink(1);
-                    pl.inventoryMenu.broadcastChanges();
+                } else if (type == BaseAmplifierStone.Type.ARMOUR) {
+                    pl.sendMessage(new TextComponent("防具强化石不能增幅武器").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
+                    return InteractionResultHolder.fail(amplifierStone);
                 }
+                float[] attribute = EsirUtil.getAttribute(offhand);
+                if (attribute[0] == -1) {
+                    pl.sendMessage(new TextComponent("该装备处于损毁状态，无法进行增幅").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
+                    return InteractionResultHolder.fail(amplifierStone);
+                }
+                ItemStack newEquip = EsirUtil.amplifyEquip(pl, offhand, attribute);
+                if (!newEquip.isEmpty())
+                    pl.setItemSlot(EquipmentSlot.OFFHAND, newEquip);
+                amplifierStone.shrink(1);
+                pl.inventoryMenu.broadcastChanges();
             }
             return InteractionResultHolder.success(amplifierStone);
         } else
-            return InteractionResultHolder.pass(amplifierStone);
+            return InteractionResultHolder.fail(amplifierStone);
     }
 
     public abstract Type getType();

@@ -26,7 +26,7 @@ public abstract class BaseStarUpgradeTicket extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack ticket = player.getItemInHand(hand);
-        if (player instanceof ServerPlayer) {
+        if (player instanceof ServerPlayer && hand == InteractionHand.MAIN_HAND) {
             ServerPlayer pl = (ServerPlayer) player;
             ItemStack offhand = pl.getItemInHand(InteractionHand.OFF_HAND);
             if (EsirUtil.isEsirArmourOrWeapon(offhand)) {
@@ -60,7 +60,7 @@ public abstract class BaseStarUpgradeTicket extends Item {
             }
             return InteractionResultHolder.success(ticket);
         } else
-            return InteractionResultHolder.pass(ticket);
+            return InteractionResultHolder.fail(ticket);
     }
 
     public abstract Type getType();

@@ -86,7 +86,7 @@ public class EsirUtil {
             if (CompoundTag.contains("Lore")) {
                 //int参数表示ListTag中的元素类型 8: String  9:List 10:Compound
                 ListTag loreList = CompoundTag.getList("Lore", 8);
-                return loreList.getAsString().contains("魂缚");
+                return loreList.getAsString().contains("魂缚") && loreList.getAsString().contains("增幅等级");
             }
         }
         return false;
