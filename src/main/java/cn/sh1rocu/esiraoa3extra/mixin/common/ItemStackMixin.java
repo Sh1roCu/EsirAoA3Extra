@@ -30,12 +30,12 @@ public abstract class ItemStackMixin {
 
     @Inject(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;setDamageValue(I)V"), cancellable = true)
     private void esir$modifyDurability(int amount, Random random, ServerPlayer user, CallbackInfoReturnable<Boolean> cir) {
-        if (this.getItem() instanceof Wearable) {
-            if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, (ItemStack) (Object) this) >= 15)
-                amount = 0;
-            int l = this.getDamageValue() + Math.min(amount, 3);
-            this.setDamageValue(l);
-            cir.setReturnValue(l >= this.getMaxDamage());
-        }
+        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, (ItemStack) (Object) this) >= 15)
+            amount = 0;
+        else if (this.getItem() instanceof Wearable)
+            amount = Math.min(amount, 3);
+        int l = this.getDamageValue() + amount;
+        this.setDamageValue(l);
+        cir.setReturnValue(l >= this.getMaxDamage());
     }
 }
