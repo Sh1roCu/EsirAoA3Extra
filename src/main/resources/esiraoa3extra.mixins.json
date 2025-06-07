@@ -11,6 +11,7 @@
     "common.ItemStackMixin",
     "common.PlayerMixin",
     "compat.aoa3.AoAEntitySpawns$SpawnPredicatesMixin",
+    "compat.aoa3.AoAPlayerEventsMixin",
     "compat.aoa3.AoASkill$InstanceMixin",
     "compat.aoa3.BaseBowMixin",
     "compat.aoa3.BaseCrossbowMixin",
