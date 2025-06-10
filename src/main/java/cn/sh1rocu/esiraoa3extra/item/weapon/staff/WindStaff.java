@@ -50,7 +50,7 @@ public class WindStaff extends BaseStaff<Object> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true)) {
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             if (target instanceof LivingEntity)
                 DamageUtil.doScaledKnockback((LivingEntity) target, shooter, 1.3f, shooter.getX() - target.getX(), shooter.getZ() - target.getZ());
 

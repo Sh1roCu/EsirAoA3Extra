@@ -54,7 +54,7 @@ public class WaterStaff extends BaseStaff<Object> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true)) {
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.MOVEMENT_SLOWDOWN, 40));
 
             return true;

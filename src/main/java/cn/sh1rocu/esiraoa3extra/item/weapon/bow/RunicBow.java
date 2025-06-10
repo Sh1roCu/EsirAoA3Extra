@@ -25,7 +25,7 @@ public class RunicBow extends BaseBow {
     public void onEntityHit(CustomArrowEntity arrow, Entity target, Entity shooter, double damage, float drawStrength) {
         if (target != null && arrow.isCritArrow() && shooter instanceof LivingEntity) {
             for (LivingEntity entity : arrow.level.getEntitiesOfClass(LivingEntity.class, arrow.getBoundingBox().inflate(3), EntityUtil.Predicates.HOSTILE_MOB)) {
-                DamageUtil.dealMagicDamage(null, (LivingEntity) shooter, entity, 2, true);
+                DamageUtil.dealMagicDamage(null, (LivingEntity) shooter, entity, 2, false);
             }
         }
     }

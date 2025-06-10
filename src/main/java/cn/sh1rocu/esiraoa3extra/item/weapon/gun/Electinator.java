@@ -40,7 +40,7 @@ public class Electinator extends BaseGun {
     @Override
     protected void doImpactEffect(Entity target, LivingEntity shooter, BaseBullet bullet, float bulletDmgMultiplier) {
         for (LivingEntity mob : target.level.getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(3), entity -> entity != target && entity instanceof Enemy)) {
-            DamageUtil.dealMagicDamage(null, shooter, mob, 0.25f, true);
+            DamageUtil.dealMagicDamage(null, shooter, mob, 0.25f, false);
         }
     }
 

@@ -24,6 +24,9 @@
     "compat.aoa3.ShellEnchantmentMixin",
     "compat.apotheosis.BaseCrossbowMixin",
     "compat.apotheosis.EnchantmentMixin",
+    "compat.apotheosis.EnchModuleEventsMixin",
+    "compat.apotheosis.LivingEntityMixin",
+    "compat.apotheosis.PotionHooksMixin",
     "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin",
     "compat.mobifier.NaturalSpawnerMixin"
   ],

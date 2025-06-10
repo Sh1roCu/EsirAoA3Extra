@@ -7,7 +7,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class ChannelCheckNetwork {
     public static SimpleChannel CHANNEL;
-    private static final String VERSION = "1.3";
+    private static final String VERSION = "1.4";
     private static final int ID = 0;
 
 

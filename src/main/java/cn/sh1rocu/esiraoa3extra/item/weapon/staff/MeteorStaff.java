@@ -71,7 +71,7 @@ public class MeteorStaff extends BaseStaff<BlockPos> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true)) {
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             WorldUtil.createExplosion(shooter, shot.level, shot, 1.4f);
 
             return true;

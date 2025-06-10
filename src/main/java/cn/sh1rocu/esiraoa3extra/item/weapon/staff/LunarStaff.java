@@ -67,7 +67,7 @@ public class LunarStaff extends BaseStaff<BlockPos> {
         float archMageMod = 1;
         archMageMod += 0.1f * nbt.getInt("archMageLevel");
         float totalMod = archMageMod * nbt.getFloat("extraDmgMod");
-        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, true)) {
+        if (DamageUtil.dealMagicDamage(shot, shooter, target, getDmg() * totalMod, false)) {
             EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.GLOWING, 200));
 
             return true;
