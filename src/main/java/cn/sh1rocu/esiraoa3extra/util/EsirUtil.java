@@ -27,7 +27,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class EsirUtil {
-    public static final List<String> BLACKLIST_ENCHANTMENTS = Arrays.asList(
+    public static final List<String> ENCHANTMENTS_BLACKLIST = Arrays.asList(
             Enchantments.FROST_WALKER.getDescriptionId(),
             ApotheosisObjects.DEPTH_MINER.getDescriptionId(),
             ApotheosisObjects.SEA_INFUSION.getDescriptionId(),

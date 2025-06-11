@@ -26,8 +26,12 @@
     "compat.apotheosis.BaseCrossbowMixin",
     "compat.apotheosis.EnchantmentMixin",
     "compat.apotheosis.EnchModuleEventsMixin",
+    "compat.apotheosis.HellInfusionEnchantmentMixin",
     "compat.apotheosis.LivingEntityMixin",
+    "compat.apotheosis.NaturesBlessingEnchantMixin",
     "compat.apotheosis.PotionHooksMixin",
+    "compat.apotheosis.ReboundingEnchantMixin",
+    "compat.apotheosis.SeaInfusionEnchantmentMixin",
     "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin",
     "compat.mobifier.NaturalSpawnerMixin"
   ],

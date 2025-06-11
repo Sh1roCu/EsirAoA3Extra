@@ -16,31 +16,31 @@ public abstract class EnchantmentMixin {
 
     @Inject(method = "canEnchant", at = @At("HEAD"), cancellable = true)
     private void esir$canEnchant(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (EsirUtil.BLACKLIST_ENCHANTMENTS.contains(this.getDescriptionId()))
+        if (EsirUtil.ENCHANTMENTS_BLACKLIST.contains(this.getDescriptionId()))
             cir.setReturnValue(false);
     }
 
     @Inject(remap = false, method = "canApplyAtEnchantingTable", at = @At("HEAD"), cancellable = true)
     private void esir$canApplyAtEnchantingTable(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (EsirUtil.BLACKLIST_ENCHANTMENTS.contains(this.getDescriptionId()))
+        if (EsirUtil.ENCHANTMENTS_BLACKLIST.contains(this.getDescriptionId()))
             cir.setReturnValue(false);
     }
 
     @Inject(remap = false, method = "isAllowedOnBooks", at = @At("HEAD"), cancellable = true)
     private void esir$isAllowedOnBooks(CallbackInfoReturnable<Boolean> cir) {
-        if (EsirUtil.BLACKLIST_ENCHANTMENTS.contains(this.getDescriptionId()))
+        if (EsirUtil.ENCHANTMENTS_BLACKLIST.contains(this.getDescriptionId()))
             cir.setReturnValue(false);
     }
 
     @Inject(method = "isDiscoverable", at = @At("HEAD"), cancellable = true)
     private void esir$isDiscoverable(CallbackInfoReturnable<Boolean> cir) {
-        if (EsirUtil.BLACKLIST_ENCHANTMENTS.contains(this.getDescriptionId()))
+        if (EsirUtil.ENCHANTMENTS_BLACKLIST.contains(this.getDescriptionId()))
             cir.setReturnValue(false);
     }
 
     @Inject(method = "isTradeable", at = @At("HEAD"), cancellable = true)
     private void esir$isTradeable(CallbackInfoReturnable<Boolean> cir) {
-        if (EsirUtil.BLACKLIST_ENCHANTMENTS.contains(this.getDescriptionId()))
+        if (EsirUtil.ENCHANTMENTS_BLACKLIST.contains(this.getDescriptionId()))
             cir.setReturnValue(false);
     }
 }

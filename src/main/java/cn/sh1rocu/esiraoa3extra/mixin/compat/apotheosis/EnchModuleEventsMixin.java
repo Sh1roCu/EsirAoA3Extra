@@ -1,6 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.mixin.compat.apotheosis;
 
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,6 +12,11 @@ import shadows.apotheosis.ench.EnchModuleEvents;
 public class EnchModuleEventsMixin {
     @Inject(remap = false, method = "livingHurt", at = @At(value = "INVOKE", target = "Lnet/minecraftforge/event/entity/living/LivingHurtEvent;setAmount(F)V"), cancellable = true)
     private void esir$onLivingHurt(LivingHurtEvent event, CallbackInfo ci) {
+        ci.cancel();
+    }
+
+    @Inject(remap = false, method = "rightClick", at = @At("HEAD"), cancellable = true)
+    private void esir$banNaturesBlessingEnchant(PlayerInteractEvent.RightClickBlock e, CallbackInfo ci) {
         ci.cancel();
     }
 }
