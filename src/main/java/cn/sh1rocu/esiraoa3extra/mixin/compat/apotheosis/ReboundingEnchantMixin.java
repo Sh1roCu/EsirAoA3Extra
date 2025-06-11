@@ -10,7 +10,7 @@ import shadows.apotheosis.ench.enchantments.ReboundingEnchant;
 
 @Mixin(ReboundingEnchant.class)
 public class ReboundingEnchantMixin {
-    @Inject(remap = false, method = "doPostHurt", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "doPostHurt", at = @At("HEAD"), cancellable = true)
     private void esir$doPostHurt(LivingEntity user, Entity attacker, int level, CallbackInfo ci) {
         ci.cancel();
     }
