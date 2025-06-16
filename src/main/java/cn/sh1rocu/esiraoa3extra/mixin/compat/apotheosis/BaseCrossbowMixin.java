@@ -5,6 +5,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.content.item.weapon.crossbow.BaseCrossbow;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import shadows.apotheosis.ApotheosisObjects;
 import shadows.apotheosis.ench.asm.EnchHooks;
 
 @Mixin(BaseCrossbow.class)
@@ -21,10 +23,13 @@ public abstract class BaseCrossbowMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/tslat/aoa3/content/item/weapon/crossbow/BaseCrossbow;fireProjectiles(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;FF)V"
-            )
-    )
+            ),
+            cancellable = true)
     public void esir$preFired(Level world, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        EnchHooks.preArrowFired(player.getItemInHand(hand));
+        ItemStack crossbowStack = player.getItemInHand(hand);
+        if (player.getCooldowns().isOnCooldown(crossbowStack.getItem()))
+            cir.setReturnValue(InteractionResultHolder.fail(crossbowStack));
+        else EnchHooks.preArrowFired(crossbowStack);
     }
 
     @Inject(
@@ -35,7 +40,10 @@ public abstract class BaseCrossbowMixin {
             )
     )
     public void esir$addCharges(Level world, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
-        EnchHooks.onArrowFired(player.getItemInHand(hand));
+        ItemStack crossbowStack = player.getItemInHand(hand);
+        EnchHooks.onArrowFired(crossbowStack);
+        if (EnchantmentHelper.getItemEnchantmentLevel(ApotheosisObjects.CRESCENDO, crossbowStack) > 0)
+            player.getCooldowns().addCooldown(crossbowStack.getItem(), 4);
     }
 
     @Inject(

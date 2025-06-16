@@ -4,12 +4,10 @@ import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -17,11 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
-import net.tslat.aoa3.common.registration.AoAItems;
-import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.LimoniteBulletEntity;
-import net.tslat.aoa3.content.entity.projectile.gun.MetalSlugEntity;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
@@ -30,34 +25,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.BaseShotgun {
-    protected final int pelletCount;
-    protected final float knockbackFactor;
-
     public BaseShotgun(final double dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
         super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
-
-        this.pelletCount = pellets;
-        this.knockbackFactor = knockbackFactor;
-    }
-
-    @Nullable
-    @Override
-    public SoundEvent getFiringSound() {
-        return AoASounds.ITEM_GUN_SHOTGUN_MEDIUM_FIRE_LONG.get();
-    }
-
-    @Override
-    public Item getAmmoItem() {
-        return AoAItems.SPREADSHOT.get();
-    }
-
-    @Override
-    public boolean isFullAutomatic() {
-        return false;
-    }
-
-    public int getPelletCount() {
-        return pelletCount;
     }
 
     @Override
@@ -112,11 +81,6 @@ public class BaseShotgun extends net.tslat.aoa3.content.item.weapon.shotgun.Base
 
             return true;
         }
-    }
-
-    @Override
-    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-        return new MetalSlugEntity(shooter, this, hand, 4, 0);
     }
 
     @OnlyIn(Dist.CLIENT)

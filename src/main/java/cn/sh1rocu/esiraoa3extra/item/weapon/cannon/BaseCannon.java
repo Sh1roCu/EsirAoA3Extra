@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -17,8 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
-import net.tslat.aoa3.common.registration.AoAItems;
-import net.tslat.aoa3.content.entity.projectile.cannon.CannonballEntity;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -30,16 +27,6 @@ import java.util.List;
 public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cannon.BaseCannon {
     public BaseCannon(double dmg, int durability, int fireDelayTicks, float recoil) {
         super(dmg, fireDelayTicks, fireDelayTicks, recoil);
-    }
-
-    @Override
-    public Item getAmmoItem() {
-        return AoAItems.CANNONBALL.get();
-    }
-
-    @Override
-    public boolean isFullAutomatic() {
-        return false;
     }
 
     @Override
@@ -79,8 +66,7 @@ public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cann
                 bulletDmgMultiplier *= (float) (1 + (((LivingEntity) target).getAttribute(Attributes.ARMOR).getValue() * 1.50) / 100);
             float shellMod = 1;
             CompoundTag nbt = bullet.getPersistentData();
-            if (bullet.getHand() != null)
-                shellMod += 0.1f * nbt.getInt("shellLevel");
+            shellMod += 0.1f * nbt.getInt("shellLevel");
             float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
             if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod)) {
                 if (target instanceof Player && ((Player) target).isBlocking())
@@ -92,11 +78,6 @@ public abstract class BaseCannon extends net.tslat.aoa3.content.item.weapon.cann
                 doImpactEffect(target, shooter, bullet, bulletDmgMultiplier);
             }
         }
-    }
-
-    @Override
-    public BaseBullet createProjectileEntity(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-        return new CannonballEntity(shooter, this, hand, 120, 0);
     }
 
     @OnlyIn(Dist.CLIENT)
