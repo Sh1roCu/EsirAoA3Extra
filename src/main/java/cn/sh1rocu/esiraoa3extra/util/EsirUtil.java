@@ -43,9 +43,11 @@ public class EsirUtil {
     private static final String HAULING_MODIFIER_UUID = "bed50d2a-8e67-d4f3-1759-6e8938c1891e";
     private static final String EXTRACTION_MODIFIER_UUID = "0450e8e0-cb28-cc59-e8a9-43459a8e2ff7";
 
-    private static final float BROKEN = 0.3f;
-    private static final float SAME = 4.7f;
+    private static final float BROKEN = 0.2f;
+    private static final float SAME = 4.8f;
     private static final int DECREASE = 5;
+
+    private static final float CRITICAL_HIT_RATE = 0.05f;
 
     public static void applyAoASkillBuff(AoASkill.Instance skill) {
         String uuid = "";
@@ -178,8 +180,15 @@ public class EsirUtil {
             }
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         } else {
-            player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+1").setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
-            if (++newAmplifierLevel == 10)
+            int addLevel = 1;
+            double valueRandom = new Random(System.currentTimeMillis()).nextDouble();
+            if (valueRandom < CRITICAL_HIT_RATE) {
+                addLevel = 2;
+            }
+            player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+" + addLevel).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
+            int oldAmplifierLevel = newAmplifierLevel;
+            newAmplifierLevel += addLevel;
+            if (oldAmplifierLevel < 10 && newAmplifierLevel >= 10)
                 player.sendMessage(new TextComponent("该装备已增幅至10级，可选择升星或继续增幅").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         }
