@@ -169,14 +169,14 @@ public class EsirUtil {
             return ItemStack.EMPTY;
         } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE)) {
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级将-1").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
+            if (--newAmplifierLevel == -1) {
+                player.sendMessage(new TextComponent("发现该装备增幅等级为0，将保持不变").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
+                return ItemStack.EMPTY;
+            }
             if (stack.getTag().contains("amplifierProtection")) {
                 player.sendMessage(new TextComponent("神恩符为你免除了此次的降级惩罚，保护效果已消失").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), Util.NIL_UUID);
                 stack.removeTagKey("amplifierProtection");
                 return stack;
-            }
-            if (--newAmplifierLevel == -1) {
-                player.sendMessage(new TextComponent("发现该装备增幅等级为0，将保持不变").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
-                return ItemStack.EMPTY;
             }
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         } else {
