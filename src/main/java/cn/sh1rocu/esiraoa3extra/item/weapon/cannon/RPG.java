@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.cannon;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -57,8 +58,11 @@ public class RPG extends BaseCannon {
         if (target != null) {
             if (target instanceof LivingEntity)
                 bulletDmgMultiplier *= 1 + (((LivingEntity) target).getAttribute(Attributes.ARMOR).getValue() * 6.66) / 100;
-
-            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) dmg * bulletDmgMultiplier) && shooter instanceof ServerPlayer) {
+            float shellMod = 1;
+            CompoundTag nbt = bullet.getPersistentData();
+            shellMod += 0.1f * nbt.getInt("shellLevel");
+            float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
+            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) dmg * bulletDmgMultiplier * shellMod * extraDmgMod) && shooter instanceof ServerPlayer) {
                 if (target instanceof LivingEntity && ((LivingEntity) target).getHealth() == 0 && target.hasImpulse) {
                     if (target.level.isEmptyBlock(target.blockPosition().below()) && target.level.isEmptyBlock(target.blockPosition().below(2)))
                         AdvancementUtil.completeAdvancement((ServerPlayer) shooter, new ResourceLocation(AdventOfAscension.MOD_ID, "overworld/surface_to_air"), "rpg_air_kill");

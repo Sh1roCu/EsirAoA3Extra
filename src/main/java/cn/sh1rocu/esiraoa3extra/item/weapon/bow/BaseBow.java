@@ -11,15 +11,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -31,17 +28,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
-    protected float drawSpeedMultiplier;
-    protected double dmg;
-
     public BaseBow(double damage, float drawSpeedMultiplier, int durability) {
         super(damage, drawSpeedMultiplier, durability);
-        this.dmg = damage;
-        this.drawSpeedMultiplier = drawSpeedMultiplier;
-    }
-
-    public double getDamage() {
-        return dmg;
     }
 
     @Override
@@ -102,66 +90,13 @@ public class BaseBow extends net.tslat.aoa3.content.item.weapon.bow.BaseBow {
         }
     }
 
-    protected ItemStack findAmmo(Player shooter, ItemStack bowStack, boolean infiniteAmmo) {
-        return shooter.getProjectile(bowStack);
-    }
-
-    protected CustomArrowEntity makeArrow(LivingEntity shooter, ItemStack bowStack, ItemStack ammoStack, float velocity, boolean consumeAmmo) {
-        ArrowItem arrowItem = (ArrowItem) (ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
-        CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level, ammoStack, shooter), this, shooter, getDamage());
-
-        arrow.shootFromRotation(shooter, shooter.xRot, shooter.yRot, 0.0F, velocity * 3.0F, 1.0F);
-
-        if (velocity == 1.0F)
-            arrow.setCritArrow(true);
-
-        int powerEnchant = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.POWER_ARROWS, bowStack);
-        int punchEnchant = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PUNCH_ARROWS, bowStack);
-
-        if (powerEnchant > 0)
-            arrow.setBaseDamage(arrow.getBaseDamage() + powerEnchant * 1.5D + 1D);
-
-        if (punchEnchant > 0)
-            arrow.setKnockback(punchEnchant);
-
-        if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, bowStack) > 0)
-            arrow.setSecondsOnFire(100);
-
-        bowStack.hurtAndBreak(1, shooter, (firingEntity) -> firingEntity.broadcastBreakEvent(shooter.getUsedItemHand()));
-
-        if (!consumeAmmo || (shooter instanceof Player && ((Player) shooter).isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
-            arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
-        return arrow;
-    }
-
-    public float getDrawSpeedMultiplier() {
-        return drawSpeedMultiplier;
-    }
-
-    public CustomArrowEntity doArrowMods(CustomArrowEntity arrow, LivingEntity shooter, ItemStack ammoStack, int useTicksRemaining) {
-        return arrow;
-    }
-
-    public void onEntityHit(CustomArrowEntity arrow, Entity target, Entity shooter, double damage, float drawStrength) {
-    }
-
-    public void onBlockHit(CustomArrowEntity arrow, BlockHitResult rayTrace, Entity shooter) {
-    }
-
-    public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {
-    }
-
+    @Override
     public double getArrowDamage(CustomArrowEntity arrow, Entity target, double currentDamage, float drawStrength, boolean isCritical) {
         double damage = currentDamage * 0.5d * (drawStrength / 3f);
         if (isCritical)
             damage += damage + (damage * 0.1f * random.nextGaussian());
 
         return damage * arrow.getPersistentData().getFloat("extraDmgMod");
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return 8;
     }
 
     @OnlyIn(Dist.CLIENT)

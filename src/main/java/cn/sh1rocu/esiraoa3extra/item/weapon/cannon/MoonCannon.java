@@ -1,5 +1,6 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.cannon;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -42,16 +43,19 @@ public class MoonCannon extends BaseCannon {
         if (target != null) {
             if (target instanceof LivingEntity)
                 bulletDmgMultiplier *= 1 + (((LivingEntity) target).getAttribute(Attributes.ARMOR).getValue() * 1.50) / 100;
-
-            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * 0.75f)) {
+            float shellMod = 1;
+            CompoundTag nbt = bullet.getPersistentData();
+            shellMod += 0.1f * nbt.getInt("shellLevel");
+            float extraDmgMod = Math.max(1, nbt.getFloat("extraDmgMod"));
+            if (DamageUtil.dealGunDamage(target, shooter, bullet, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod * 0.75f)) {
                 if (target instanceof Player && ((Player) target).isBlocking())
                     ((Player) target).disableShield(true);
 
                 if (target instanceof LivingEntity)
-                    DamageUtil.doScaledKnockback((LivingEntity) target, shooter, ((float) getDamage() * 0.75f * bulletDmgMultiplier) / 10f, shooter.getX() - target.getX(), shooter.getZ() - target.getZ());
+                    DamageUtil.doScaledKnockback((LivingEntity) target, shooter, ((float) getDamage() * 0.75f * bulletDmgMultiplier * shellMod * extraDmgMod) / 10f, shooter.getX() - target.getX(), shooter.getZ() - target.getZ());
             }
 
-            DamageUtil.dealMagicDamage(bullet, shooter, target, (float) getDamage() * bulletDmgMultiplier * 0.25f, false);
+            DamageUtil.dealMagicDamage(bullet, shooter, target, (float) getDamage() * bulletDmgMultiplier * shellMod * extraDmgMod * 0.25f, false);
         }
     }
 

@@ -1,24 +1,14 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.greatblade;
 
 import cn.sh1rocu.esiraoa3extra.util.EsirUtil;
-import com.google.common.collect.ImmutableSetMultimap;
 import net.minecraft.core.Direction;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.util.Lazy;
 import net.tslat.aoa3.common.registration.AoAEnchantments;
 import net.tslat.aoa3.content.capability.volatilestack.VolatileStackCapabilityProvider;
-
-import java.util.UUID;
 
 public class BaseGreatblade extends net.tslat.aoa3.content.item.weapon.greatblade.BaseGreatblade {
     public BaseGreatblade(final double baseDmg, final double attackSpeed, final int durability) {
@@ -43,26 +33,5 @@ public class BaseGreatblade extends net.tslat.aoa3.content.item.weapon.greatblad
             starLevel = (int) attribute[2];
         }
         return baseDamage * (1 + extraDmg) * (1 + (0.04f * (amplifierLevel + (12.5F * starLevel))));
-    }
-
-    @Override
-    protected Lazy<ImmutableSetMultimap<Attribute, AttributeModifier>> buildDefaultAttributes() {
-        return Lazy.of(() -> ImmutableSetMultimap.of(
-                Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getDamage(), AttributeModifier.Operation.ADDITION),
-                Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", getAttackSpeed(), AttributeModifier.Operation.ADDITION),
-                ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(UUID.fromString("93bb7485-ce86-4e78-ab50-26f53d78ad9d"), "AoAGreatbladeReach", 1.5f, AttributeModifier.Operation.ADDITION)));
-    }
-
-    @Override
-    public float getDestroySpeed(ItemStack stack, BlockState state) {
-        Material material = state.getMaterial();
-
-        if (material == Material.WEB) {
-            return 25.0f;
-        } else if (material == Material.PLANT || material == Material.REPLACEABLE_PLANT || material == Material.CORAL || material == Material.LEAVES || material == Material.VEGETABLE) {
-            return 2.0f;
-        } else {
-            return 1.0f;
-        }
     }
 }
