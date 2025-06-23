@@ -44,10 +44,9 @@ public class EsirUtil {
     private static final String EXTRACTION_MODIFIER_UUID = "0450e8e0-cb28-cc59-e8a9-43459a8e2ff7";
 
     private static final float BROKEN = 0.2f;
-    private static final float SAME = 4.8f;
     private static final int DECREASE = 5;
 
-    private static final float CRITICAL_HIT_RATE = 0.05f;
+    private static final float BONUS_RATE = 0.05f;
 
     public static void applyAoASkillBuff(AoASkill.Instance skill) {
         String uuid = "";
@@ -144,18 +143,14 @@ public class EsirUtil {
         CompoundTag display = parent.getCompound("display");
         //int参数表示ListTag中的元素类型 8: String  9:List 10:Compound
         ListTag loreList = display.getList("Lore", 8);
-        int INCREASE = 5;
-        float addSame = 0;
-        if((int)attribute[1] < 10){
-            INCREASE += (int) (10 / (attribute[2] * attribute[2] + 1));
-            if(Math.round(attribute[2]) > 0){
-                addSame = (float) (Math.round(Math.sqrt(attribute[2]) * 10) / 10.0);
-            }
-        }else {
-            addSame = Math.max(0, 15f - SAME);
-        }
+
         int newAmplifierLevel = (int) attribute[1];
-        int randomNum = new Random(System.currentTimeMillis()).nextInt((int) (10 * (BROKEN + SAME + DECREASE + INCREASE + addSame))) + 1;
+        final int starLevel = (int) attribute[2];
+
+        final int INCREASE = newAmplifierLevel < 10 ? 5 + (10 / (starLevel * starLevel + 1)) : 5;
+        final float SAME = newAmplifierLevel < 10 ? (float) (5 + Math.round(Math.sqrt(starLevel) * 10) / 10.0) : 15;
+
+        int randomNum = new Random(System.currentTimeMillis()).nextInt((int) (10 * (BROKEN + SAME + DECREASE + INCREASE))) + 1;
         if (randomNum <= 10 * BROKEN) {
             player.sendMessage(new TextComponent("增幅失败，该装备将变为损毁状态，增幅等级将清零").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (stack.getTag().contains("amplifierProtection")) {
@@ -173,10 +168,10 @@ public class EsirUtil {
                     loreList.set(i, StringTag.valueOf(c.replace("增幅等级：+" + oldAmplifierLevel, "增幅等级：+0")));
                 }
             }
-        } else if (randomNum <= 10 * (BROKEN + SAME + addSame)) {
+        } else if (randomNum <= 10 * (BROKEN + SAME)) {
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级未发生变化").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             return ItemStack.EMPTY;
-        } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE + addSame)) {
+        } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE)) {
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级将-1").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (--newAmplifierLevel == -1) {
                 player.sendMessage(new TextComponent("发现该装备增幅等级为0，将保持不变").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
@@ -189,14 +184,11 @@ public class EsirUtil {
             }
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         } else {
-            int addLevel = 1;
-            double valueRandom = new Random(System.currentTimeMillis()).nextInt(100);
-            if (valueRandom < (int)(CRITICAL_HIT_RATE * 100)) {
-                addLevel = 2;
-            }
-            player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+" + addLevel).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
+            int bonus = new Random(System.currentTimeMillis()).nextInt(100) + 1;
+            int level_add = bonus <= BONUS_RATE * 100 ? 2 : 1;
+            player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+" + level_add).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
             int oldAmplifierLevel = newAmplifierLevel;
-            newAmplifierLevel += addLevel;
+            newAmplifierLevel += level_add;
             if (oldAmplifierLevel < 10 && newAmplifierLevel >= 10)
                 player.sendMessage(new TextComponent("该装备已增幅至10级，可选择升星或继续增幅").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
             modifyAmplifierLevel(loreList, newAmplifierLevel);
