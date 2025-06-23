@@ -33,6 +33,7 @@
     "compat.apotheosis.ReboundingEnchantMixin",
     "compat.apotheosis.SeaInfusionEnchantmentMixin",
     "compat.enhanced_celestials.AoAEntitySpawns$SpawnPredicatesMixin",
+    "compat.enhanced_celestials.LunarEventChangedPacketMixin",
     "compat.mobifier.NaturalSpawnerMixin"
   ],
   "client": [
