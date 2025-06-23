@@ -144,9 +144,18 @@ public class EsirUtil {
         CompoundTag display = parent.getCompound("display");
         //int参数表示ListTag中的元素类型 8: String  9:List 10:Compound
         ListTag loreList = display.getList("Lore", 8);
-        int INCREASE = attribute[1] < 10 ? 5 + (int) (10 / (attribute[2] * attribute[2] + 1)) : 5;
+        int INCREASE = 5;
+        float addSame = 0;
+        if((int)attribute[1] < 10){
+            INCREASE += (int) (10 / (attribute[2] * attribute[2] + 1));
+            if(Math.round(attribute[2]) > 0){
+                addSame = (float) (Math.round(Math.sqrt(attribute[2]) * 10) / 10.0);
+            }
+        }else {
+            addSame = Math.max(0, 15f - SAME);
+        }
         int newAmplifierLevel = (int) attribute[1];
-        int randomNum = new Random(System.currentTimeMillis()).nextInt((int) (10 * (BROKEN + SAME + DECREASE + INCREASE))) + 1;
+        int randomNum = new Random(System.currentTimeMillis()).nextInt((int) (10 * (BROKEN + SAME + DECREASE + INCREASE + addSame))) + 1;
         if (randomNum <= 10 * BROKEN) {
             player.sendMessage(new TextComponent("增幅失败，该装备将变为损毁状态，增幅等级将清零").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (stack.getTag().contains("amplifierProtection")) {
@@ -164,10 +173,10 @@ public class EsirUtil {
                     loreList.set(i, StringTag.valueOf(c.replace("增幅等级：+" + oldAmplifierLevel, "增幅等级：+0")));
                 }
             }
-        } else if (randomNum <= 10 * (BROKEN + SAME)) {
+        } else if (randomNum <= 10 * (BROKEN + SAME + addSame)) {
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级未发生变化").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             return ItemStack.EMPTY;
-        } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE)) {
+        } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE + addSame)) {
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级将-1").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (stack.getTag().contains("amplifierProtection")) {
                 player.sendMessage(new TextComponent("神恩符为你免除了此次的降级惩罚，保护效果已消失").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), Util.NIL_UUID);
@@ -181,8 +190,8 @@ public class EsirUtil {
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         } else {
             int addLevel = 1;
-            double valueRandom = new Random(System.currentTimeMillis()).nextDouble();
-            if (valueRandom < CRITICAL_HIT_RATE) {
+            double valueRandom = new Random(System.currentTimeMillis()).nextInt(100);
+            if (valueRandom < (int)(CRITICAL_HIT_RATE * 100)) {
                 addLevel = 2;
             }
             player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+" + addLevel).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
