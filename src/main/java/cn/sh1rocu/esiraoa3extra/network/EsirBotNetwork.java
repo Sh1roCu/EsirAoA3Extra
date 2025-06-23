@@ -23,8 +23,7 @@ public class EsirBotNetwork {
                 LunarEventNotificationPacket.class,
                 LunarEventNotificationPacket::encode,
                 LunarEventNotificationPacket::decode,
-                (packet, context) -> {
-                }
+                LunarEventNotificationPacket::handle
         );
     }
 }
