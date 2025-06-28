@@ -30,7 +30,7 @@ public abstract class BaseGunMixin {
             index = 1,
             remap = false
     )
-    private int esir$reduceCD(int origin, @Local(ordinal = 1) int nextFireDelay, @Local(argsOnly = true) ItemStack stack) {
+    private int esir$reduceCD(int origin, @Local(argsOnly = true) ItemStack stack) {
         if (stack.getOrCreateTag().contains("CD")) {
             double cdMod = stack.getOrCreateTag().getDouble("CD");
             int result = (int) (origin * (1 - cdMod));

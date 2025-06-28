@@ -1,6 +1,7 @@
 package cn.sh1rocu.esiraoa3extra.mixin.common;
 
 import cn.sh1rocu.esiraoa3extra.registration.EsirAttributes;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.EntityType;
@@ -15,9 +16,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
@@ -29,10 +28,9 @@ public abstract class PlayerMixin extends LivingEntity {
         super(arg, arg2);
     }
 
-    @Inject(method = "createAttributes", at = @At("RETURN"), cancellable = true)
-    private static void esir$addCustomAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-        AttributeSupplier.Builder mutableAttribute = cir.getReturnValue().add(EsirAttributes.MAGIC_DAMAGE.get());
-        cir.setReturnValue(mutableAttribute);
+    @ModifyReturnValue(method = "createAttributes", at = @At("RETURN"))
+    private static AttributeSupplier.Builder esir$addCustomAttributes(AttributeSupplier.Builder original) {
+        return original.add(EsirAttributes.MAGIC_DAMAGE.get());
     }
 
     @SuppressWarnings("all")
