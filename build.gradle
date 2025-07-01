@@ -54,6 +54,7 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
     }
     forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    modImplementation fileTree('libs')
     modImplementation "curse.maven:aoa3-311054:4431558"
     modImplementation "curse.maven:placebo-283644:4501015"
     modImplementation "curse.maven:apotheosis-313970:3936649"

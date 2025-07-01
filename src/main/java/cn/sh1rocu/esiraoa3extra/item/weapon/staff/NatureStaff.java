@@ -1,7 +1,10 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
+import cn.sh1rocu.hybridcompat.api.event.aoa3.AoA3ChangeResidenceEvent;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
@@ -9,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -41,7 +45,12 @@ public class NatureStaff extends BaseStaff<ArrayList<BlockPos>> {
 
             return WorldUtil.canModifyBlock(caster.level, pos, caster, staff);
         });
-
+        AoA3ChangeResidenceEvent event = new AoA3ChangeResidenceEvent.NatureStaff(caster.level, caster, blocks);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) {
+            caster.sendMessage(new TranslatableComponent("message.hybridcompat.nature_staff"), Util.NIL_UUID);
+            return null;
+        }
         return blocks.isEmpty() ? null : blocks;
     }
 

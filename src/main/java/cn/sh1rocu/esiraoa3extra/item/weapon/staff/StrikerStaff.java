@@ -1,7 +1,10 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.staff;
 
+import cn.sh1rocu.hybridcompat.api.event.aoa3.AoA3ChangeResidenceEvent;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -13,6 +16,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.tslat.aoa3.common.registration.AoAItems;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -46,6 +50,14 @@ public class StrikerStaff extends BaseStaff<BlockPos> {
         if (caster instanceof Player)
             trace = PlayerUtil.getBlockAimingAt((Player) caster, 70);
 
+        if (trace != null) {
+            AoA3ChangeResidenceEvent event = new AoA3ChangeResidenceEvent(caster.level, trace, caster);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (event.isCanceled()) {
+                caster.sendMessage(new TranslatableComponent("message.hybridcompat.striker_staff"), Util.NIL_UUID);
+                return null;
+            }
+        }
         return trace;
     }
 

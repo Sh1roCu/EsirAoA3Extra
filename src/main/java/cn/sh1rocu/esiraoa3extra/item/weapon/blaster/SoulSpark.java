@@ -1,7 +1,10 @@
 package cn.sh1rocu.esiraoa3extra.item.weapon.blaster;
 
+import cn.sh1rocu.hybridcompat.api.event.aoa3.AoA3ChangeResidenceEvent;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +18,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.MinecraftForge;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.content.entity.projectile.blaster.SoulSparkEntity;
@@ -48,6 +52,12 @@ public class SoulSpark extends BaseBlaster {
     @Override
     public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
         if (!EntityUtil.isImmuneToSpecialAttacks(target, shooter)) {
+            AoA3ChangeResidenceEvent event = new AoA3ChangeResidenceEvent(target.level, target.blockPosition(), shooter);
+            MinecraftForge.EVENT_BUS.post(event);
+            if (event.isCanceled()) {
+                shooter.sendMessage(new TranslatableComponent("message.hybridcompat.soul_spark"), Util.NIL_UUID);
+                return false;
+            }
             if (shooter instanceof ServerPlayer && !((ServerPlayer) shooter).isCreative()) {
                 ServerPlayer player = (ServerPlayer) shooter;
                 AoAResource.Instance spirit = PlayerUtil.getResource(player, AoAResources.SPIRIT.get());
