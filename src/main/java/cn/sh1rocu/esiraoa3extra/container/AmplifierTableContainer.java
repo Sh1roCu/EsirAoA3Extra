@@ -205,8 +205,8 @@ public class AmplifierTableContainer extends AbstractContainerMenu {
                 || (!(leftOldEquip.getItem() instanceof ArmorItem) && !(rightOldEquip.getItem() instanceof ArmorItem))) {
             ItemStack leftNewEquip = leftOldEquip.copy();
             ItemStack rightNewEquip = rightOldEquip.copy();
-            this.leftNewEquip.setItem(0, EsirUtil.upgradeEquip(this.player, leftNewEquip, (int) leftNewAttribute[1], (int) leftNewAttribute[2]));
-            this.rightNewEquip.setItem(0, EsirUtil.upgradeEquip(this.player, rightNewEquip, (int) rightNewAttribute[1], (int) rightNewAttribute[2]));
+            this.leftNewEquip.setItem(0, EsirUtil.upgradeEquip(this.player, leftNewEquip, (int) leftNewAttribute[1], (int) leftNewAttribute[2],(int) leftNewAttribute[3]));
+            this.rightNewEquip.setItem(0, EsirUtil.upgradeEquip(this.player, rightNewEquip, (int) rightNewAttribute[1], (int) rightNewAttribute[2],(int) rightNewAttribute[3]));
         } else
             this.resetOutputs();
     }
