@@ -2,6 +2,7 @@ package cn.sh1rocu.esiraoa3extra.util;
 
 import cn.sh1rocu.esiraoa3extra.EsirAoA3Extra;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +28,7 @@ import java.util.Random;
 import java.util.UUID;
 
 public class EsirUtil {
+
     public static final List<String> ENCHANTMENTS_BLACKLIST = Arrays.asList(
             Enchantments.FROST_WALKER.getDescriptionId(),
             ApotheosisObjects.DEPTH_MINER.getDescriptionId(),
@@ -42,12 +44,17 @@ public class EsirUtil {
     private static final String DEXTERITY_MODIFIER_UUID = "0b749ea5-c17b-2f76-d7e6-81bd006299f1";
     private static final String HAULING_MODIFIER_UUID = "bed50d2a-8e67-d4f3-1759-6e8938c1891e";
     private static final String EXTRACTION_MODIFIER_UUID = "0450e8e0-cb28-cc59-e8a9-43459a8e2ff7";
-
-    private static final float BROKEN = 0.2f;
-    private static final int DECREASE = 5;
-
-    private static final float BONUS_RATE = 0.05f;
-
+    private static final float BONUS_RATE = 0.02f;
+    //摘星
+    private static final float MINIMUM_GUARANTEE_RATE = 0.003f;
+    //成功系数
+    private static final float SUCCESS_COEFFICIENT = 0.7f;
+    //失败系数
+    private static final float FAILURE_COEFFICIENT = 1f;
+    //不变系数
+    private static final float CONSTANT_COEFFICIENT = 5f;
+    //损毁系数
+    private static final float DAMAGED_COEFFICIENT = 0.5f;
     public static void applyAoASkillBuff(AoASkill.Instance skill) {
         String uuid = "";
         String modifierName = "";
@@ -109,6 +116,7 @@ public class EsirUtil {
         float extraDmg = 0;
         int amplifierLevel = 0;
         int starLevel = 0;
+        int nonChieftain = 0;
         boolean isBroken = false;
         if (stack.hasTag() && stack.getTag().contains("display")) {
             CompoundTag CompoundTag = stack.getTagElement("display");
@@ -128,6 +136,8 @@ public class EsirUtil {
                                 amplifierLevel = Integer.parseInt(s.substring(s.lastIndexOf("+") + 1));
                             } else if (s.contains("命星：۞")) {
                                 starLevel = s.split("：")[1].length();
+                            } else if (s.contains("摘星手：")){
+                                nonChieftain = Integer.parseInt(s.split("：")[1]);
                             }
                         }
                     } catch (JsonParseException ignored) {
@@ -135,7 +145,7 @@ public class EsirUtil {
                 }
             }
         }
-        return isBroken ? new float[]{-1, 0, starLevel} : new float[]{extraDmg, amplifierLevel, starLevel};
+        return isBroken ? new float[]{-1, 0, starLevel ,nonChieftain} : new float[]{extraDmg, amplifierLevel, starLevel, nonChieftain};
     }
 
     public static ItemStack amplifyEquip(Player player, ItemStack stack, float[] attribute) {
@@ -146,12 +156,21 @@ public class EsirUtil {
 
         int newAmplifierLevel = (int) attribute[1];
         final int starLevel = (int) attribute[2];
+        int nonChieftain = (int) attribute[3];
 
-        final int INCREASE = newAmplifierLevel < 10 ? 5 + (10 / (starLevel * starLevel + 1)) : 5;
-        final float SAME = newAmplifierLevel < 10 ? (float) (5 + Math.round(Math.sqrt(starLevel) * 10) / 10.0) : 15;
+        final int actualUseStarLevel = newAmplifierLevel >=10 ? 10 : starLevel;
 
+        //不变概率
+        final float SAME = (float) (1 + Math.sqrt(actualUseStarLevel)) * CONSTANT_COEFFICIENT;
+        //损毁概率
+        final float BROKEN = (float) (Math.sqrt(actualUseStarLevel)/10f) * DAMAGED_COEFFICIENT;
+        //失败概率
+        final float DECREASE = (float)(1 + Math.sqrt(2 * actualUseStarLevel)) * FAILURE_COEFFICIENT;
+        //增幅成功概率
+        final float INCREASE =  (float)(newAmplifierLevel >= 10?SUCCESS_COEFFICIENT * (10f / Math.sqrt(actualUseStarLevel / 2f + 1)): SUCCESS_COEFFICIENT * ((10f / Math.sqrt(actualUseStarLevel / 2f + 1)) * Math.pow(MINIMUM_GUARANTEE_RATE * nonChieftain + 1,3)));
         int randomNum = new Random(System.currentTimeMillis()).nextInt((int) (10 * (BROKEN + SAME + DECREASE + INCREASE))) + 1;
         if (randomNum <= 10 * BROKEN) {
+            modifyStarPicking(loreList,nonChieftain,newAmplifierLevel);
             player.sendMessage(new TextComponent("增幅失败，该装备将变为损毁状态，增幅等级将清零").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (stack.getTag().contains("amplifierProtection")) {
                 player.sendMessage(new TextComponent("神恩符为你免除了此次的损毁惩罚，保护效果已消失").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), Util.NIL_UUID);
@@ -169,22 +188,26 @@ public class EsirUtil {
                 }
             }
         } else if (randomNum <= 10 * (BROKEN + SAME)) {
+            modifyStarPicking(loreList,nonChieftain,newAmplifierLevel);
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级未发生变化").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             return ItemStack.EMPTY;
         } else if (randomNum <= 10 * (BROKEN + SAME + DECREASE)) {
+            modifyStarPicking(loreList,nonChieftain,newAmplifierLevel);
             player.sendMessage(new TextComponent("增幅失败，该装备增幅等级将-1").setStyle(Style.EMPTY.withColor(ChatFormatting.RED)), Util.NIL_UUID);
             if (--newAmplifierLevel == -1) {
                 player.sendMessage(new TextComponent("发现该装备增幅等级为0，将保持不变").setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), Util.NIL_UUID);
                 return ItemStack.EMPTY;
             }
             if (stack.getTag().contains("amplifierProtection")) {
-                player.sendMessage(new TextComponent("神恩符为你免除了此次的降级惩罚，保护效果已消失").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), Util.NIL_UUID);
+                player.sendMessage(new TextComponent("神恩符为你免除了此次的损毁惩罚，保护效果已消失").setStyle(Style.EMPTY.withColor(ChatFormatting.GREEN)), Util.NIL_UUID);
                 stack.removeTagKey("amplifierProtection");
                 return stack;
             }
             modifyAmplifierLevel(loreList, newAmplifierLevel);
         } else {
+            modifyStarPicking(loreList,nonChieftain,newAmplifierLevel);
             int bonus = new Random(System.currentTimeMillis()).nextInt(100) + 1;
+            //双倍概率
             int level_add = bonus <= BONUS_RATE * 100 ? 2 : 1;
             player.sendMessage(new TextComponent("增幅成功，该装备增幅等级+" + level_add).setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW)), Util.NIL_UUID);
             int oldAmplifierLevel = newAmplifierLevel;
@@ -225,6 +248,26 @@ public class EsirUtil {
         }
     }
 
+    // 判断当前摘星条件
+    private static void modifyStarPicking(ListTag loreList, int nonChieftain, int newAmplifierLevel){
+        if(newAmplifierLevel < 10){
+            boolean isMinimumGuarantee = true;
+            for (int i = 0; i < loreList.size(); i++){
+                String c = loreList.getString(i);
+                if (c.contains("摘星手：")) {
+                    String start = c.substring(c.indexOf("摘星手：") + 4);
+                    String oldChieftain = start.substring(0, start.indexOf("\""));
+                    loreList.set(i, StringTag.valueOf(c.replace("摘星手：" + oldChieftain, "摘星手：" + (nonChieftain + 1))));
+                    isMinimumGuarantee = false;
+                    break;
+                }
+            }
+            if (isMinimumGuarantee) {
+                loreList.add(StringTag.valueOf("{\"italic\":false,\"color\":\"white\",\"extra\":[{\"text\":\"\"},{\"bold\":true,\"color\":\"green\",\"text\":\"摘星手："+ (nonChieftain + 1) + "\"}],\"text\":\"\"}"));
+            }
+        }
+    }
+
     public static ItemStack fixBrokenEquip(ItemStack stack) {
         CompoundTag parent = stack.getTag();
         CompoundTag display = parent.getCompound("display");
@@ -243,7 +286,7 @@ public class EsirUtil {
         return stack;
     }
 
-    public static ItemStack upgradeEquip(Player player, ItemStack stack, int amplifierLevel, int starLevel) {
+    public static ItemStack upgradeEquip(Player player, ItemStack stack, int amplifierLevel, int starLevel,int nonChieftain) {
         CompoundTag parent = stack.getTag();
         CompoundTag display = parent.getCompound("display");
         //int参数表示ListTag中的元素类型 8: String  9:List 10:Compound
@@ -257,6 +300,7 @@ public class EsirUtil {
                 starLevelBuilder.append("۞");
             }
         }
+        boolean isMinimumGuarantee = true;
         for (int i = 0; i < loreList.size(); i++) {
             String c = loreList.getString(i);
             if (c.contains("增幅等级：+")) {
@@ -267,11 +311,20 @@ public class EsirUtil {
                 String start = c.substring(c.indexOf("命星：") + 3);
                 String oldStarLevel = start.substring(0, start.indexOf("\""));
                 loreList.set(i, StringTag.valueOf(c.replace("命星：" + oldStarLevel, "命星：" + starLevelBuilder)));
-            } else if (c.contains("待绑定")) {
+            }else if (c.contains("摘星手：")){
+                isMinimumGuarantee = false;
+                String start = c.substring(c.indexOf("摘星手：") + 4);
+                String oldNonChieftain = start.substring(0, start.indexOf("\""));
+                loreList.set(i, StringTag.valueOf(c.replace("摘星手：" + oldNonChieftain, "摘星手：" + nonChieftain)));
+            }
+            else if (c.contains("待绑定")) {
                 loreList.set(i, StringTag.valueOf(c.replace("待绑定", "归属者: " + player.getName().getString())));
                 noBound = false;
             } else if (c.contains("归属者: "))
                 noBound = false;
+        }
+        if (isMinimumGuarantee) {
+            loreList.add(StringTag.valueOf("{\"italic\":false,\"color\":\"white\",\"extra\":[{\"text\":\"\"},{\"bold\":true,\"color\":\"green\",\"text\":\"摘星手："+ nonChieftain + "\"}],\"text\":\"\"}"));
         }
         if (noBound)
             loreList.add(StringTag.valueOf("{\"extra\":[{\"bold\":false,\"italic\":false,\"underlined\":false,\"strikethrough\":false,\"obfuscated\":false,\"color\":\"red\",\"text\":\"归属者: $player\"}],\"text\":\"\"}".replace("$player", player.getName().getString())));
